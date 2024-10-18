@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.queueManager = exports.QueueManager = void 0;
-const supabase_js_1 = require("@supabase/supabase-js");
-class QueueManager {
+import { createClient } from '@supabase/supabase-js';
+export class QueueManager {
     constructor() {
         this.queue = [];
         this.isProcessing = false;
@@ -11,7 +8,7 @@ class QueueManager {
         if (!supabaseUrl || !supabaseServiceRoleKey) {
             throw new Error('Supabase URL or service role key is missing from environment variables');
         }
-        this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseServiceRoleKey);
+        this.supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
         console.log('Supabase client initialized');
     }
     async addToQueue(pageInfo) {
@@ -89,6 +86,5 @@ class QueueManager {
         }
     }
 }
-exports.QueueManager = QueueManager;
-exports.queueManager = new QueueManager();
+export const queueManager = new QueueManager();
 //# sourceMappingURL=queueManager.js.map

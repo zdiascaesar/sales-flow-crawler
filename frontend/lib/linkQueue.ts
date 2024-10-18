@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio';
+import cheerio from 'cheerio';
 import { Page } from 'puppeteer';
 import { URL } from 'url';
 

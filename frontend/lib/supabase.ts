@@ -9,7 +9,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export async function getTableInfo(tableName: string) {
+interface TableInfo {
+  column_name: string;
+  data_type: string;
+  is_nullable: boolean;
+  column_default: string | null;
+}
+
+export async function getTableInfo(tableName: string): Promise<TableInfo[] | null> {
   const { data, error } = await supabase
     .rpc('get_table_info', { table_name: tableName })
 
@@ -18,5 +25,5 @@ export async function getTableInfo(tableName: string) {
     return null
   }
 
-  return data
+  return data as TableInfo[]
 }

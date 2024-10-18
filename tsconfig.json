@@ -9,10 +9,18 @@
     "rootDir": "./",
     "sourceMap": true,
     "downlevelIteration": true,
-    "lib": ["ES2020", "DOM"],
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "frontend/*"]
+    },
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "noImplicitAny": false,
+    "incremental": true
   },
-  "include": ["frontend/**/*.ts"],
+  "include": ["frontend/**/*.ts", "frontend/**/*.tsx", "frontend/**/*.js", "frontend/**/*.jsx"],
   "exclude": ["node_modules"]
 }

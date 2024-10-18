@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import fs from 'fs';
+import * as fs from 'fs';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;

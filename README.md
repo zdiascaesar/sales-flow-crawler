@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Email Crawler Project
 
 ## Supabase Configuration
@@ -36,3 +37,6 @@ Replace `your_supabase_url`, `your_supabase_anon_key`, and `your_supabase_servic
 After updating the RLS policies and environment variables, you should be able to run the crawler without encountering the row-level security error.
 
 If you continue to experience issues, please check the console logs for any error messages and ensure that all environment variables are correctly set.
+=======
+# crawler
+>>>>>>> 01cc738c0941535e4e3aa149675737a077aafa69

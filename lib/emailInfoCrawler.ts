@@ -2,7 +2,7 @@ import { URL } from 'url';
 import puppeteer, { Browser } from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { CrawlerConfig, PageInfo, SupabaseClient, EventType, EventCallback } from './types';
-import { loadConfig } from './config.js';
+import { loadConfig } from './config';
 import { initializeSupabaseClient } from './supabaseClient';
 import { EventEmitter } from './eventEmitter';
 import { extractPageInfo } from './pageInfoExtractor';

@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.5",
-    "axios": "^0.21.4",
+    "axios": "^1.7.7",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.5",
     "nodemailer": "^6.9.15",
     "openai": "^4.68.0",
-    "puppeteer": "^10.0.0",
+    "puppeteer": "^23.6.0",
     "robots-parser": "^2.2.0"
   },
   "devDependencies": {

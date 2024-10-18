@@ -1,0 +1,109 @@
+2024-10-18T13:25:25.243Z: Fetching emails from Supabase...
+2024-10-18T13:25:25.724Z: Found 3 email(s) to send to.
+2024-10-18T13:25:26.904Z: Email sent to dias@f-tap.app: <429f00c3-42a4-9d99-b6d1-d2994577fcbc@agnaplus.com.kz>
+2024-10-18T13:25:29.864Z: Email sent to dias@salesflow.team: <3623074a-1b68-7ead-d2c4-de243f987813@agnaplus.com.kz>
+2024-10-18T13:25:32.031Z: Email sent to balinteegor@gmail.com: <be05d0e0-6b30-5afa-aa7f-109a5921e7c8@agnaplus.com.kz>
+2024-10-18T13:25:33.033Z: Email sending process completed.
+2024-10-18T13:45:29.738Z: Starting crawl from https://f-tap.app
+2024-10-18T13:45:33.052Z: Crawling: https://f-tap.app
+2024-10-18T13:45:34.920Z: Error crawling https://f-tap.app: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://f-tap.app
+2024-10-18T13:45:34.997Z: Crawling completed. Visited 1 pages.
+2024-10-18T13:45:40.135Z: Starting crawl from https://salesflow.team
+2024-10-18T13:45:40.507Z: Crawling: https://salesflow.team
+2024-10-18T13:45:42.251Z: Crawling: #top
+2024-10-18T13:45:42.251Z: Crawling: /privacy-policy
+2024-10-18T13:45:42.451Z: Error crawling #top: Protocol error (Page.navigate): Cannot navigate to invalid URL
+2024-10-18T13:45:42.452Z: Error crawling /privacy-policy: Protocol error (Page.navigate): Cannot navigate to invalid URL
+2024-10-18T13:45:42.520Z: Crawling completed. Visited 3 pages.
+2024-10-18T13:46:48.944Z: Starting main function
+2024-10-18T13:46:48.945Z: Fetching emails from Supabase...
+2024-10-18T13:46:49.433Z: Found 3 email(s) to send to.
+2024-10-18T13:46:49.433Z: Email dias@f-tap.app identified as business email
+2024-10-18T13:46:49.434Z: Crawling website for f-tap.app
+2024-10-18T13:46:49.434Z: Starting crawl from https://f-tap.app
+2024-10-18T13:46:50.794Z: Crawling: https://f-tap.app
+2024-10-18T13:46:52.486Z: Error crawling https://f-tap.app: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://f-tap.app
+2024-10-18T13:46:52.530Z: Crawling completed. Visited 1 pages.
+2024-10-18T13:46:52.530Z: Generating email content for dias@f-tap.app
+2024-10-18T13:46:55.576Z: Sending email to dias@f-tap.app
+2024-10-18T13:46:56.718Z: Email sent to dias@f-tap.app: <d6880202-4ac6-7edb-3d7b-12cf1098313c@agnaplus.com.kz>
+2024-10-18T13:46:57.719Z: Email dias@salesflow.team identified as business email
+2024-10-18T13:46:57.721Z: Crawling website for salesflow.team
+2024-10-18T13:46:57.721Z: Starting crawl from https://salesflow.team
+2024-10-18T13:46:58.003Z: Crawling: https://salesflow.team
+2024-10-18T13:46:59.312Z: Crawling: #top
+2024-10-18T13:46:59.313Z: Crawling: /privacy-policy
+2024-10-18T13:46:59.460Z: Error crawling /privacy-policy: Protocol error (Page.navigate): Cannot navigate to invalid URL
+2024-10-18T13:46:59.460Z: Error crawling #top: Protocol error (Page.navigate): Cannot navigate to invalid URL
+2024-10-18T13:46:59.529Z: Crawling completed. Visited 3 pages.
+2024-10-18T13:46:59.529Z: Generating email content for dias@salesflow.team
+2024-10-18T13:47:01.932Z: Sending email to dias@salesflow.team
+2024-10-18T13:47:03.018Z: Email sent to dias@salesflow.team: <f0093091-b850-64b5-c316-ba7416995bbd@agnaplus.com.kz>
+2024-10-18T13:47:04.020Z: Email balinteegor@gmail.com identified as personal email
+2024-10-18T13:47:04.021Z: Generating email content for balinteegor@gmail.com
+2024-10-18T13:47:07.050Z: Sending email to balinteegor@gmail.com
+2024-10-18T13:47:08.130Z: Email sent to balinteegor@gmail.com: <7e415755-f3e1-d9d1-763a-fd7a49649361@agnaplus.com.kz>
+2024-10-18T13:47:09.132Z: Email sending process completed.
+2024-10-18T13:48:37.611Z: Starting main function
+2024-10-18T13:48:37.612Z: Fetching emails from Supabase...
+2024-10-18T13:48:38.222Z: Found 3 email(s) to send to.
+2024-10-18T13:48:38.223Z: Email dias@f-tap.app identified as business email
+2024-10-18T13:48:38.223Z: Crawling website for f-tap.app
+2024-10-18T13:48:38.223Z: Starting crawl from https://f-tap.app
+2024-10-18T13:48:38.738Z: Crawling: https://f-tap.app
+2024-10-18T13:48:40.307Z: Error using Puppeteer for https://f-tap.app: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://f-tap.app. Trying SSL bypass...
+2024-10-18T13:48:40.692Z: Error crawling https://f-tap.app: write EPROTO 407295E501000000:error:0A000410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1590:SSL alert number 40
+
+2024-10-18T13:48:40.825Z: Crawling completed. Visited 1 pages.
+2024-10-18T13:48:40.826Z: Generating email content for dias@f-tap.app
+2024-10-18T13:48:43.370Z: Sending email to dias@f-tap.app
+2024-10-18T13:48:46.593Z: Email sent to dias@f-tap.app: <02565571-ee8d-9249-51a3-0a58d15b4b21@agnaplus.com.kz>
+2024-10-18T13:48:47.596Z: Email dias@salesflow.team identified as business email
+2024-10-18T13:48:47.597Z: Crawling website for salesflow.team
+2024-10-18T13:48:47.599Z: Starting crawl from https://salesflow.team
+2024-10-18T13:48:47.901Z: Crawling: https://salesflow.team
+2024-10-18T13:48:49.112Z: Crawling: /privacy-policy
+2024-10-18T13:48:49.207Z: Error using Puppeteer for /privacy-policy: Protocol error (Page.navigate): Cannot navigate to invalid URL. Trying SSL bypass...
+2024-10-18T13:48:49.207Z: Error crawling /privacy-policy: Invalid URL
+2024-10-18T13:48:49.225Z: Crawling completed. Visited 2 pages.
+2024-10-18T13:48:49.225Z: Generating email content for dias@salesflow.team
+2024-10-18T13:48:52.111Z: Sending email to dias@salesflow.team
+2024-10-18T13:48:53.230Z: Email sent to dias@salesflow.team: <6e8c9669-7759-5f30-ef31-8ddf5956ea29@agnaplus.com.kz>
+2024-10-18T13:48:54.232Z: Email balinteegor@gmail.com identified as personal email
+2024-10-18T13:48:54.234Z: Generating email content for balinteegor@gmail.com
+2024-10-18T13:48:57.254Z: Sending email to balinteegor@gmail.com
+2024-10-18T13:48:58.366Z: Email sent to balinteegor@gmail.com: <c193d646-9de5-fab6-4bad-3ec9c8aec698@agnaplus.com.kz>
+2024-10-18T13:48:59.368Z: Email sending process completed.
+2024-10-18T13:50:57.703Z: Starting main function
+2024-10-18T13:50:57.704Z: Fetching emails from Supabase...
+2024-10-18T13:50:58.169Z: Found 3 email(s) to send to.
+2024-10-18T13:50:58.170Z: Email dias@f-tap.app identified as business email
+2024-10-18T13:50:58.170Z: Crawling website for f-tap.app
+2024-10-18T13:50:58.170Z: Starting crawl from https://f-tap.app
+2024-10-18T13:51:00.689Z: Crawling: https://f-tap.app/
+2024-10-18T13:51:02.570Z: Error using Puppeteer for https://f-tap.app/: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://f-tap.app/. Trying SSL bypass...
+2024-10-18T13:51:02.957Z: Error crawling https://f-tap.app/: write EPROTO 407295E501000000:error:0A000410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1590:SSL alert number 40
+
+2024-10-18T13:51:03.035Z: Crawling completed. Visited 1 pages.
+2024-10-18T13:51:03.035Z: Generating email content for dias@f-tap.app
+2024-10-18T13:51:06.210Z: Sending email to dias@f-tap.app
+2024-10-18T13:51:08.096Z: Email sent to dias@f-tap.app: <673d36e5-0e4c-d0fd-f6ad-d57dac955aa3@agnaplus.com.kz>
+2024-10-18T13:51:09.099Z: Email dias@salesflow.team identified as business email
+2024-10-18T13:51:09.100Z: Crawling website for salesflow.team
+2024-10-18T13:51:09.100Z: Starting crawl from https://salesflow.team
+2024-10-18T13:51:09.380Z: Crawling: https://salesflow.team/
+2024-10-18T13:51:10.590Z: Crawling: #top
+2024-10-18T13:51:10.590Z: Crawling: /privacy-policy
+2024-10-18T13:51:10.701Z: Error using Puppeteer for #top: Protocol error (Page.navigate): Cannot navigate to invalid URL. Trying SSL bypass...
+2024-10-18T13:51:10.701Z: Error crawling #top: Invalid URL
+2024-10-18T13:51:10.702Z: Error using Puppeteer for /privacy-policy: Protocol error (Page.navigate): Cannot navigate to invalid URL. Trying SSL bypass...
+2024-10-18T13:51:10.702Z: Error crawling /privacy-policy: Invalid URL
+2024-10-18T13:51:11.049Z: Crawling completed. Visited 3 pages.
+2024-10-18T13:51:11.050Z: Generating email content for dias@salesflow.team
+2024-10-18T13:51:13.594Z: Sending email to dias@salesflow.team
+2024-10-18T13:51:14.765Z: Email sent to dias@salesflow.team: <9703ec3c-003c-a7dc-a94a-4767bd26d75d@agnaplus.com.kz>
+2024-10-18T13:51:15.768Z: Email balinteegor@gmail.com identified as personal email
+2024-10-18T13:51:15.769Z: Generating email content for balinteegor@gmail.com
+2024-10-18T13:51:18.655Z: Sending email to balinteegor@gmail.com
+2024-10-18T13:51:19.735Z: Email sent to balinteegor@gmail.com: <08532493-f736-fe64-23fc-7f7799252cff@agnaplus.com.kz>
+2024-10-18T13:51:20.738Z: Email sending process completed.

@@ -2,7 +2,7 @@ import { URL } from 'url';
 import puppeteer, { Browser } from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { CrawlerConfig, PageInfo, SupabaseClient, EventType, EventCallback } from './types';
-import { loadConfig } from './config';
+import { loadConfig } from './config.js';
 import { initializeSupabaseClient } from './supabaseClient';
 import { EventEmitter } from './eventEmitter';
 import { extractPageInfo } from './pageInfoExtractor';
@@ -10,6 +10,7 @@ import { LinkQueue } from './linkQueue';
 import { EmailFilter } from './emailFilter';
 import { queueManager } from './queueManager';
 
+// The rest of the file remains unchanged
 export class EmailInfoCrawler {
   private config: CrawlerConfig;
   private startUrl: URL;

@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio';
+import cheerio from 'cheerio';
 import { PageInfo } from './types';
 
 export function extractPageInfo($: cheerio.Root, url: string, normalizeEmail: (email: string) => string): PageInfo {

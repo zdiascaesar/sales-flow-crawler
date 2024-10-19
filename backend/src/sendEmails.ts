@@ -5,7 +5,7 @@ import fs from 'fs';
 import OpenAI from 'openai';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
 import { URL } from 'url';
 import https from 'https';
 
@@ -342,5 +342,3 @@ export async function main() {
     }
   }
 }
-
-

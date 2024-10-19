@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { LoginForm } from '@/components/LoginForm'
-import { supabase } from '@/lib/supabase'
+import { LoginForm } from '../../components/LoginForm'
+import { supabase } from '../../lib/supabase'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(true)

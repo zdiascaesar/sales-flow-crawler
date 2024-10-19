@@ -18,7 +18,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function fetchEmails() {
+async function fetchEmailsFromDB() {
   console.log('Attempting to fetch emails...');
   try {
     const { data, error } = await supabase
@@ -52,9 +52,9 @@ export async function fetchEmails() {
   }
 }
 
-export async function main() {
+async function main() {
   try {
-    await fetchEmails();
+    await fetchEmailsFromDB();
     console.log('Script execution completed.');
   } catch (error) {
     if (error instanceof Error) {
@@ -64,3 +64,8 @@ export async function main() {
     }
   }
 }
+
+export = {
+  fetchEmailsFromDB,
+  main
+};

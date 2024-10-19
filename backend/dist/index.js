@@ -1,6 +1,7 @@
-import express from 'express';
-import { fetchEmails } from './fetchEmails.js';
-import { main as sendEmails } from './sendEmails.js';
+"use strict";
+const express = require('express');
+const { fetchEmailsFromDB } = require('./fetchEmails');
+const { main: sendEmails } = require('./sendEmails');
 const app = express();
 const port = process.env.PORT || 3000;
 // Middleware
@@ -13,7 +14,7 @@ app.get('/', (req, res) => {
 async function processEmailQueue() {
     console.log('Processing email queue...');
     try {
-        await fetchEmails();
+        await fetchEmailsFromDB();
         await sendEmails();
     }
     catch (error) {
@@ -33,5 +34,5 @@ app.listen(port, () => {
     // Start the email processing in the background
     startEmailProcessing();
 });
-export default app; // Export the app for testing or further use
+module.exports = app; // Export the app for testing or further use
 //# sourceMappingURL=index.js.map

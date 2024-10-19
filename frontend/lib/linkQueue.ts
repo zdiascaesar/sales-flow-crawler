@@ -31,6 +31,19 @@ export class LinkQueue {
       this.queue.push(url);
     }
   }
+
+  // New getter methods
+  getQueue(): string[] {
+    return this.queue;
+  }
+
+  getVisited(): Set<string> {
+    return this.visited;
+  }
+
+  getStartUrl(): URL {
+    return this.startUrl;
+  }
 }
 
 export async function queueLinks($: CheerioAPI, baseUrl: string, page: Page): Promise<number> {

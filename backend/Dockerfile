@@ -13,8 +13,8 @@ RUN npm install
 # Copy the application code to the working directory
 COPY . .
 
-# Build the TypeScript code
-RUN npm run build
+# Clear the dist folder and build the TypeScript code
+RUN rm -rf dist && npm run build
 
 # Production stage
 FROM node:18-slim
@@ -43,11 +43,8 @@ RUN npm install --only=production
 # Copy the built application from the builder stage
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Copy any additional necessary files (e.g., .env if needed)
-# COPY .env .
-
 # Expose the port the app runs on (adjust if necessary)
 EXPOSE 4000
 
 # Define the command to run the application
-CMD ["npm", "start"]
+CMD ["node", "--experimental-specifier-resolution=node", "dist/index.js"]

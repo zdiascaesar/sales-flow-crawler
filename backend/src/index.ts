@@ -1,6 +1,6 @@
-import express from 'express';
-import { fetchEmails } from './fetchEmails.js';
-import { main as sendEmails } from './sendEmails.js';
+const express = require('express');
+const { fetchEmailsFromDB } = require('./fetchEmails');
+const { main: sendEmails } = require('./sendEmails');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 async function processEmailQueue() {
   console.log('Processing email queue...');
   try {
-    await fetchEmails();
+    await fetchEmailsFromDB();
     await sendEmails();
   } catch (error) {
     console.error('Error processing email queue:', error);
@@ -40,4 +40,4 @@ app.listen(port, () => {
   startEmailProcessing();
 });
 
-export default app; // Export the app for testing or further use
+module.exports = app; // Export the app for testing or further use

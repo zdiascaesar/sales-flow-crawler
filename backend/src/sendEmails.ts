@@ -95,15 +95,28 @@ class LinkQueue {
       try {
         const fullUrl = new URL(link, baseUrl);
         return fullUrl.hostname === this.startUrl.hostname && 
-               !this.visited.has(fullUrl.href) && 
-               !this.queue.includes(fullUrl.href);
+               !this.getVisited().has(fullUrl.href) && 
+               !this.getQueue().includes(fullUrl.href);
       } catch (error) {
         return false;
       }
     });
 
-    this.queue.push(...newLinks);
+    this.getQueue().push(...newLinks);
     return newLinks.length;
+  }
+
+  // New getter methods
+  getQueue(): string[] {
+    return this.queue;
+  }
+
+  getVisited(): Set<string> {
+    return this.visited;
+  }
+
+  getStartUrl(): URL {
+    return this.startUrl;
   }
 }
 

@@ -1,24 +1,8 @@
-import dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
-
-dotenv.config();
+import { supabase } from './config';
 
 console.log('Script started');
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-console.log('Supabase URL:', supabaseUrl);
-console.log('Supabase Key:', supabaseKey ? '[REDACTED]' : 'Not set');
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Supabase URL or API Key is missing. Please check your .env file.');
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-async function fetchEmailsFromDB() {
+async function fetchEmailsFromDB(): Promise<string[]> {
   console.log('Attempting to fetch emails...');
   try {
     const { data, error } = await supabase
@@ -28,14 +12,14 @@ async function fetchEmailsFromDB() {
     if (error) {
       console.error('Supabase query error:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
-      return;
+      return [];
     }
 
     if (data && data.length > 0) {
       console.log('Fetched emails:');
-      data.forEach(row => console.log(row.email));
+      data.forEach((row: { email: string }) => console.log(row.email));
       console.log(`Total emails fetched: ${data.length}`);
-      return data.map(row => row.email);
+      return data.map((row: { email: string }) => row.email);
     } else {
       console.log('No emails found in the table or no permission to read.');
       return [];
@@ -52,7 +36,7 @@ async function fetchEmailsFromDB() {
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   try {
     await fetchEmailsFromDB();
     console.log('Script execution completed.');
@@ -65,7 +49,4 @@ async function main() {
   }
 }
 
-export = {
-  fetchEmailsFromDB,
-  main
-};
+export { fetchEmailsFromDB, main };

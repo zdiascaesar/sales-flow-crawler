@@ -1,37 +1,31 @@
 import dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
-import OpenAI from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
-import { URL } from 'url';
 import https from 'https';
+import { supabase, supabaseUrl, supabaseKey } from './config';
+import { LinkQueue } from './LinkQueue';
 
+dotenv.config();
 console.log('Script started');
 
-function log(message: string) {
+function log(message: string): void {
   const timestamp = new Date().toISOString();
   const logMessage = `${timestamp}: ${message}\n`;
   console.log(message);
   fs.appendFileSync('email_log.txt', logMessage);
 }
 
-dotenv.config();
 log('Environment variables loaded');
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
 log('Supabase URL: ' + (supabaseUrl ? 'Set' : 'Not set'));
 log('Supabase Key: ' + (supabaseKey ? 'Set' : 'Not set'));
 log('OpenAI API Key: ' + (openaiApiKey ? 'Set' : 'Not set'));
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Supabase URL or API Key is missing. Please check your .env file.');
-}
 
 if (!openaiApiKey) {
   throw new Error('OpenAI API Key is missing. Please check your .env file.');
@@ -39,8 +33,10 @@ if (!openaiApiKey) {
 
 log('Initializing clients');
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-const openai = new OpenAI({ apiKey: openaiApiKey });
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -54,72 +50,6 @@ const transporter = nodemailer.createTransport({
 
 log('Clients initialized');
 
-class LinkQueue {
-  private startUrl: URL;
-  private queue: string[];
-  private visited: Set<string>;
-
-  constructor(startUrl: string) {
-    this.startUrl = new URL(startUrl);
-    this.queue = [this.startUrl.href];
-    this.visited = new Set();
-  }
-
-  hasUnvisitedUrls(): boolean {
-    return this.queue.length > 0;
-  }
-
-  getNextUrl(): string | undefined {
-    return this.queue.shift();
-  }
-
-  markVisited(url: string): void {
-    this.visited.add(url);
-  }
-
-  isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async queueLinks($: cheerio.CheerioAPI, baseUrl: string): Promise<number> {
-    const links = $('a')
-      .map((i, el) => $(el).attr('href'))
-      .get();
-
-    const newLinks = links.filter(link => {
-      try {
-        const fullUrl = new URL(link, baseUrl);
-        return fullUrl.hostname === this.startUrl.hostname && 
-               !this.getVisited().has(fullUrl.href) && 
-               !this.getQueue().includes(fullUrl.href);
-      } catch (error) {
-        return false;
-      }
-    });
-
-    this.getQueue().push(...newLinks);
-    return newLinks.length;
-  }
-
-  // New getter methods
-  getQueue(): string[] {
-    return this.queue;
-  }
-
-  getVisited(): Set<string> {
-    return this.visited;
-  }
-
-  getStartUrl(): URL {
-    return this.startUrl;
-  }
-}
-
 async function fetchWithSSLBypass(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     https.get(url, { rejectUnauthorized: false }, (res) => {
@@ -130,9 +60,9 @@ async function fetchWithSSLBypass(url: string): Promise<string> {
   });
 }
 
-async function crawl(startUrl: string, maxPages = 10, concurrency = 5) {
+async function crawl(startUrl: string, maxPages = 10, concurrency = 5): Promise<any[]> {
   const linkQueue = new LinkQueue(startUrl);
-  const results: Array<{ url: string; title: string; description: string; bodyText: string }> = [];
+  const results: any[] = [];
   let crawledPages = 0;
   let activeRequests = 0;
 
@@ -157,11 +87,7 @@ async function crawl(startUrl: string, maxPages = 10, concurrency = 5) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
   } catch (error) {
-    if (error instanceof Error) {
-      log(`Crawl error: ${error.message}`);
-    } else {
-      log(`Crawl error: ${error}`);
-    }
+    log(`Crawl error: ${error instanceof Error ? error.message : String(error)}`);
   } finally {
     await browser.close();
   }
@@ -170,7 +96,7 @@ async function crawl(startUrl: string, maxPages = 10, concurrency = 5) {
   return results;
 }
 
-async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: LinkQueue, results: Array<{ url: string; title: string; description: string; bodyText: string }>) {
+async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: LinkQueue, results: any[]): Promise<void> {
   linkQueue.markVisited(url);
   log(`Crawling: ${url}`);
 
@@ -183,11 +109,7 @@ async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: Lin
       html = await page.content();
       await page.close();
     } catch (error) {
-      if (error instanceof Error) {
-        log(`Error using Puppeteer for ${url}: ${error.message}. Trying SSL bypass...`);
-      } else {
-        log(`Error using Puppeteer for ${url}: ${error}. Trying SSL bypass...`);
-      }
+      log(`Error using Puppeteer for ${url}: ${error instanceof Error ? error.message : String(error)}. Trying SSL bypass...`);
       html = await fetchWithSSLBypass(url);
     }
 
@@ -197,29 +119,24 @@ async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: Lin
 
     await linkQueue.queueLinks($, url);
   } catch (error) {
-    if (error instanceof Error) {
-      log(`Error crawling ${url}: ${error.message}`);
-    } else {
-      log(`Error crawling ${url}: ${error}`);
-    }
-    // Add a fallback method for content extraction
+    log(`Error crawling ${url}: ${error instanceof Error ? error.message : String(error)}`);
     results.push({
       url,
       title: 'Unable to extract title',
       description: 'Unable to extract description',
-      bodyText: `Failed to crawl this page. Error: ${error instanceof Error ? error.message : error}`
+      bodyText: `Failed to crawl this page. Error: ${error instanceof Error ? error.message : String(error)}`
     });
   }
 }
 
-function extractPageInfo($: cheerio.CheerioAPI, url: string) {
+function extractPageInfo($: cheerio.CheerioAPI, url: string): { url: string; title: string; description: string; bodyText: string } {
   const title = $('title').text() || 'No title found';
   const description = $('meta[name="description"]').attr('content') || 'No description found';
-  const bodyText = $('body').text().slice(0, 1000) || 'No body text found'; // Get first 1000 characters of body text
+  const bodyText = $('body').text().slice(0, 1000) || 'No body text found';
   return { url, title, description, bodyText };
 }
 
-async function fetchEmails() {
+async function fetchEmails(): Promise<string[]> {
   log('Fetching emails from Supabase...');
   const { data, error } = await supabase
     .from('emails')
@@ -233,12 +150,12 @@ async function fetchEmails() {
 }
 
 function isBusinessEmail(email: string): boolean {
-  const commonPersonalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com'];
+  const commonPersonalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'mail.com', 'yandex.com', 'protonmail.com', 'zoho.com', 'gmx.com', 'fastmail.com', 'hushmail.com', 'tutanota.com', 'inbox.com', 'mail.ru', 'bk.ru', 'list.ru', 'inbox.ru', 'rambler.ru', 'qq.com', 'nate.com', 'naver.com', '163.com', '126.com', 'sina.com', 'daum.net', 'rediffmail.com', 'web.de', 'libero.it', 'virgilio.it', 'wanadoo.fr', 'orange.fr'];
   const domain = email.split('@')[1];
   return !commonPersonalDomains.includes(domain);
 }
 
-async function generateEmailContent(email: string, websiteContent = '') {
+async function generateEmailContent(email: string, websiteContent = ''): Promise<{ subject: string; body: string }> {
   try {
     const prompt = `Generate a personalized email subject and body based on the following information:
 
@@ -253,7 +170,7 @@ Format the email body with proper paragraphs and line breaks.
 Please format your response as a valid JSON object with "subject" and "body" fields. Do not include any additional text or formatting outside of the JSON object. For example:
 {"subject": "Your personalized subject here", "body": "Your personalized email body here\\n\\nWith proper formatting and paragraphs."}`;
 
-    const completion = await openai.chat.completions.create({
+    const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
         {"role": "system", "content": "You are a helpful assistant that generates personalized email content in valid JSON format with proper formatting."},
@@ -262,9 +179,12 @@ Please format your response as a valid JSON object with "subject" and "body" fie
       max_tokens: 1000
     });
 
-    const content = completion.choices[0].message.content?.trim() || '';
+    const content = response.data.choices[0]?.message?.content?.trim() || '';
     
-    // Sanitize and parse the content
+    if (!content) {
+      throw new Error('No content generated from OpenAI');
+    }
+
     const sanitizedContent = content.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
     const parsedContent = JSON.parse(sanitizedContent);
     
@@ -274,11 +194,7 @@ Please format your response as a valid JSON object with "subject" and "body" fie
       throw new Error('Invalid content structure');
     }
   } catch (error) {
-    if (error instanceof Error) {
-      log(`Error generating email content: ${error.message}`);
-    } else {
-      log(`Error generating email content: ${error}`);
-    }
+    log(`Error generating email content: ${error instanceof Error ? error.message : String(error)}`);
     return { 
       subject: 'Introduction from Google', 
       body: 'Error generating personalized content. This is a default message.' 
@@ -286,7 +202,7 @@ Please format your response as a valid JSON object with "subject" and "body" fie
   }
 }
 
-async function sendEmail(to: string, subject: string, content: string) {
+async function sendEmail(to: string, subject: string, content: string): Promise<boolean> {
   const htmlContent = content.split('\n').map(paragraph => `<p>${paragraph}</p>`).join('');
   
   const mailOptions = {
@@ -302,16 +218,12 @@ async function sendEmail(to: string, subject: string, content: string) {
     log(`Email sent to ${to}: ${info.messageId}`);
     return true;
   } catch (error) {
-    if (error instanceof Error) {
-      log(`Error sending email to ${to}: ${error.message}`);
-    } else {
-      log(`Error sending email to ${to}: ${error}`);
-    }
+    log(`Error sending email to ${to}: ${error instanceof Error ? error.message : String(error)}`);
     return false;
   }
 }
 
-export async function main() {
+export async function main(): Promise<void> {
   try {
     const emails = await fetchEmails();
     
@@ -331,7 +243,7 @@ export async function main() {
         const domain = email.split('@')[1];
         const startUrl = `https://${domain}`;
         log(`Crawling website for ${domain}`);
-        const crawlResults = await crawl(startUrl, 5, 2); // Crawl up to 5 pages with 2 concurrent requests
+        const crawlResults = await crawl(startUrl, 5, 2);
         
         websiteContent = crawlResults.map(result => `${result.title}\n${result.description}\n${result.bodyText}`).join('\n\n');
       }
@@ -342,16 +254,11 @@ export async function main() {
       log(`Sending email to ${email}`);
       await sendEmail(email, subject, body);
       
-      // Basic rate limiting: wait for 1 second between emails
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     log('Email sending process completed.');
   } catch (error) {
-    if (error instanceof Error) {
-      log(`Error in main function: ${error.message}`);
-    } else {
-      log(`Error in main function: ${error}`);
-    }
+    log(`Error in main function: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

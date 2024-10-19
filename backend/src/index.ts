@@ -1,6 +1,6 @@
-const express = require('express');
-const { fetchEmailsFromDB } = require('./fetchEmails');
-const { main: sendEmails } = require('./sendEmails');
+import express from 'express';
+import { fetchEmailsFromDB } from './fetchEmails';
+import { main as sendEmails } from './sendEmails';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,12 +9,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: express.Request, res: express.Response) => {
   res.send('Backend server is running');
 });
 
 // Combined function to process email queue
-async function processEmailQueue() {
+async function processEmailQueue(): Promise<void> {
   console.log('Processing email queue...');
   try {
     await fetchEmailsFromDB();
@@ -25,7 +25,7 @@ async function processEmailQueue() {
 }
 
 // Email processing function
-const startEmailProcessing = async (intervalMinutes = 5) => {
+const startEmailProcessing = async (intervalMinutes: number = 5): Promise<void> => {
   console.log('Starting email processing...');
   setInterval(async () => {
     await processEmailQueue();
@@ -40,4 +40,4 @@ app.listen(port, () => {
   startEmailProcessing();
 });
 
-module.exports = app; // Export the app for testing or further use
+export default app; // Export the app for testing or further use

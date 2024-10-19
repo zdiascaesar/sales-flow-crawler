@@ -1,23 +1,5 @@
-# Build stage
-FROM node:18 AS builder
-
-# Set the working directory in the container
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Install the application dependencies
-RUN npm install
-
-# Copy the application code to the working directory
-COPY . .
-
-# Clear the dist folder and build the TypeScript code
-RUN rm -rf dist && npm run build
-
-# Production stage
-FROM node:18-slim
+# Use an official Node.js runtime as a parent image
+FROM node:18
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -34,17 +16,17 @@ RUN apt-get update && apt-get install -y \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm install --only=production
+# Install dependencies
+RUN npm install
 
-# Copy the built application from the builder stage
-COPY --from=builder /usr/src/app/dist ./dist
+# Copy the rest of the application code
+COPY . .
 
-# Expose the port the app runs on (adjust if necessary)
-EXPOSE 4000
+# Expose the port the app runs on (adjust if 4000 is specifically required)
+EXPOSE 3000
 
-# Define the command to run the application
-CMD ["node", "--experimental-specifier-resolution=node", "dist/index.js"]
+# Define the command to run the app
+CMD ["npm", "start"]

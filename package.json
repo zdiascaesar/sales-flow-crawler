@@ -1,33 +1,8 @@
 {
-  "name": "email-crawler",
-  "version": "1.0.0",
-  "description": "A web crawler to find email addresses",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js",
-    "send-emails": "node sendEmails.js"
-  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.5",
-    "axios": "^1.7.7",
-    "cheerio": "^1.0.0",
-    "dotenv": "^16.4.5",
-    "nodemailer": "^6.9.15",
-    "openai": "^4.68.0",
-    "puppeteer": "^23.6.0",
-    "robots-parser": "^2.2.0"
+    "cheerio": "^1.0.0"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.35",
-    "@types/cookie": "^0.6.0",
-    "@types/next": "^8.0.7",
-    "@types/node": "^22.7.6",
-    "@types/nodemailer": "^6.4.16",
-    "@types/puppeteer": "^5.4.7",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.6.3"
+    "@types/express": "^5.0.0"
   }
 }

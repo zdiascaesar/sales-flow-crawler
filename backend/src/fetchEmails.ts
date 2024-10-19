@@ -18,7 +18,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function fetchEmails() {
+export async function fetchEmails() {
   console.log('Attempting to fetch emails...');
   try {
     const { data, error } = await supabase
@@ -35,19 +35,32 @@ async function fetchEmails() {
       console.log('Fetched emails:');
       data.forEach(row => console.log(row.email));
       console.log(`Total emails fetched: ${data.length}`);
+      return data.map(row => row.email);
     } else {
       console.log('No emails found in the table or no permission to read.');
+      return [];
     }
   } catch (error) {
     console.error('Error fetching emails:', error);
-    if (error.message) console.error('Error message:', error.message);
-    if (error.details) console.error('Error details:', error.details);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      if ('details' in error) {
+        console.error('Error details:', (error as any).details);
+      }
+    }
+    return [];
   }
 }
 
-async function main() {
-  await fetchEmails();
-  console.log('Script execution completed.');
+export async function main() {
+  try {
+    await fetchEmails();
+    console.log('Script execution completed.');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Unhandled error:', error.message);
+    } else {
+      console.error('Unhandled error:', error);
+    }
+  }
 }
-
-main().catch(error => console.error('Unhandled error:', error));

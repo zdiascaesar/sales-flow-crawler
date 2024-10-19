@@ -3,15 +3,16 @@ version: '3.8'
 services:
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - NODE_ENV=production
     volumes:
-      - .:/usr/src/app
+      - ./backend:/usr/src/app
       - /usr/src/app/node_modules
+      - /usr/src/app/dist
 
   frontend:
     build:
@@ -29,3 +30,4 @@ services:
 
 volumes:
   node_modules:
+  dist:

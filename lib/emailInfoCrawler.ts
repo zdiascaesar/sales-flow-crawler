@@ -1,16 +1,15 @@
 import { URL } from 'url';
 import puppeteer, { Browser } from 'puppeteer';
-import * as cheerio from 'cheerio';
+import { CheerioAPI, load } from 'cheerio';
 import { CrawlerConfig, PageInfo, SupabaseClient, EventType, EventCallback } from './types';
 import { loadConfig } from './config';
 import { initializeSupabaseClient } from './supabaseClient';
 import { EventEmitter } from './eventEmitter';
 import { extractPageInfo } from './pageInfoExtractor';
-import { LinkQueue } from './linkQueue';
+import { LinkQueue, queueLinks } from './linkQueue';
 import { EmailFilter } from './emailFilter';
 import { queueManager } from './queueManager';
 
-// The rest of the file remains unchanged
 export class EmailInfoCrawler {
   private config: CrawlerConfig;
   private startUrl: URL;
@@ -129,12 +128,13 @@ export class EmailInfoCrawler {
     console.log(`Crawling: ${url} (${this.crawledPages}/${this.config.maxPages})`);
     this.eventEmitter.emit('log', `Crawling: ${url} (${this.crawledPages}/${this.config.maxPages})`);
 
+
     try {
       const page = await browser.newPage();
       await page.setDefaultNavigationTimeout(this.config.timeout);
       await page.goto(url, { waitUntil: 'domcontentloaded' });
       const html = await page.content();
-      const $ = cheerio.load(html);
+      const $: CheerioAPI = load(html);
 
       const pageInfo = extractPageInfo($, url, this.normalizeEmail.bind(this));
 
@@ -160,7 +160,7 @@ export class EmailInfoCrawler {
       }
 
       if (this.crawledPages < this.config.maxPages && !this.stopRequested) {
-        const newLinks = await this.linkQueue.queueLinks($, url, page);
+        const newLinks = await queueLinks($, url, page);
         console.log(`Queued ${newLinks} new links from ${url}`);
         this.eventEmitter.emit('log', `Queued ${newLinks} new links from ${url}`);
       }
@@ -181,7 +181,6 @@ export class EmailInfoCrawler {
       this.errors.push({ url, error: (error as Error).message });
     }
   }
-
   private async getExistingPageInfo(url: string): Promise<PageInfo | null> {
     try {
       const { data, error } = await this.supabase

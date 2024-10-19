@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 import { PageInfo } from './types';
 
-export function extractPageInfo($: cheerio.Root, url: string, normalizeEmail: (email: string) => string): PageInfo {
+export function extractPageInfo($: cheerio.CheerioAPI, url: string, normalizeEmail: (email: string) => string): PageInfo {
   const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/g;
 
   const body = $('body').text();

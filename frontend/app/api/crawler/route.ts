@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { EmailInfoCrawler } from '@/lib/emailInfoCrawler'
-import { getTableInfo } from '@/lib/supabase'
+import { EmailInfoCrawler } from '../../../lib/emailInfoCrawler'
+import { getTableInfo } from '../../../lib/supabase'
 import * as fs from 'fs'
 import * as path from 'path'
 

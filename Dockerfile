@@ -4,12 +4,6 @@ WORKDIR /usr/src/app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend .
-
-# Use environment variables directly
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
-
 RUN npm run build
 
 # Stage 2: Build backend

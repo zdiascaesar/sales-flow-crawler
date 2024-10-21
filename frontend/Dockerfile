@@ -1,5 +1,5 @@
-# Build stage
-FROM node:18-alpine AS builder
+# Use the official Node.js 18 image as a parent image
+FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -10,43 +10,24 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy the rest of the frontend code
+# Copy the rest of the application code
 COPY . .
-
-# Create public directory if it doesn't exist
-RUN mkdir -p public
 
 # Build the Next.js application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS runner
+# Install Chromium
+RUN apk add --no-cache chromium
 
-# Install Chrome
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont
-
-# Tell Puppeteer to use the installed Chrome instead of downloading its own
+# Set environment variables for Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-WORKDIR /app
+# Set the Node environment to production
+ENV NODE_ENV production
 
-# Copy necessary files from the build stage
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/.next ./.next/
-COPY --from=builder /app/public ./public/
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/node_modules ./node_modules/
-COPY --from=builder /app/crawler-config.json ./
+# Expose the port the app runs on
+EXPOSE 3000
 
-# Set environment variables
-ENV NODE_ENV=production
-
-# Use the $PORT environment variable provided by Heroku
-CMD ["sh", "-c", "npm start -- -p ${PORT:-3000}"]
+# Start the application
+CMD ["npm", "start"]

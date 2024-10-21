@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from './ui/button'
@@ -11,62 +11,25 @@ export function LoginForm() {
   const [email, setEmail] = useState('test@example.com')
   const [password, setPassword] = useState('testpassword')
   const [error, setError] = useState<string | null>(null)
-  const [logs, setLogs] = useState<string[]>([])
   const router = useRouter()
   const supabase = createClientComponentClient()
 
-  const addLog = useCallback((message: string) => {
-    setLogs(prevLogs => [...prevLogs, message])
-    console.log(message) // Also log to console for easier debugging
-  }, [])
-
-  const handleLogin = useCallback(async (e?: React.FormEvent) => {
-    e?.preventDefault()
-    setError(null)
-    setLogs([])
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
     try {
-      addLog(`Attempting to sign in with email: ${email}`)
-      
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      
-      if (error) {
-        addLog(`Login error: ${error.message}`)
-        throw error
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-      addLog(`Sign in successful. User ID: ${data.user?.id}`)
-      addLog(`User email: ${data.user?.email}`)
-      addLog(`User role: ${data.user?.role}`)
-      
-      // Check if session is set
-      const { data: sessionData } = await supabase.auth.getSession()
-      addLog(`Session check: ${sessionData.session ? 'Session is set' : 'No session found'}`)
-      
-      if (sessionData.session) {
-        addLog(`Session user ID: ${sessionData.session.user.id}`)
-        addLog(`Session expires at: ${new Date(sessionData.session.expires_at! * 1000).toLocaleString()}`)
-      } else {
-        throw new Error('No session created after login')
-      }
+      if (error) throw error
 
-      addLog('Redirecting to dashboard...')
       router.push('/dashboard')
-      
-    } catch (error) {
-      if (error instanceof Error) {
-        addLog(`Caught error: ${error.message}`)
-        setError(error.message)
-      } else {
-        addLog('Caught unexpected error')
-        setError('An unexpected error occurred')
-      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setError(errorMessage)
     }
-  }, [email, password, addLog, supabase.auth, router])
-
-  useEffect(() => {
-    // Attempt automatic login when component mounts
-    handleLogin();
-  }, [handleLogin]);
+  }
 
   return (
     <Card className="w-[350px]">
@@ -105,14 +68,6 @@ export function LoginForm() {
             Login
           </Button>
         </form>
-        {logs.length > 0 && (
-          <div className="mt-4 p-2 bg-gray-100 rounded">
-            <h3 className="font-bold mb-2">Logs:</h3>
-            {logs.map((log, index) => (
-              <p key={index} className="text-sm">{log}</p>
-            ))}
-          </div>
-        )}
       </CardContent>
     </Card>
   )

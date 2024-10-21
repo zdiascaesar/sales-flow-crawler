@@ -1,9 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { initializeSupabaseClient } from './supabaseClient'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kwephmvllmojxuxcgzco.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'fallback_key'
-
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = initializeSupabaseClient()
 
 interface TableInfo {
   column_name: string;
@@ -13,13 +10,17 @@ interface TableInfo {
 }
 
 export async function getTableInfo(tableName: string): Promise<TableInfo[] | null> {
-  const { data, error } = await supabase
-    .rpc('get_table_info', { table_name: tableName })
+  try {
+    const { data, error } = await supabase
+      .rpc('get_table_info', { table_name: tableName })
 
-  if (error) {
+    if (error) {
+      throw error
+    }
+
+    return data as TableInfo[]
+  } catch (error) {
     console.error('Error fetching table info:', error)
     return null
   }
-
-  return data as TableInfo[]
 }

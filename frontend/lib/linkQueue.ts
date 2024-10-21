@@ -46,7 +46,7 @@ export class LinkQueue {
   }
 }
 
-export async function queueLinks($: CheerioAPI, baseUrl: string, page: Page): Promise<number> {
+export async function queueLinks(linkQueue: LinkQueue, $: CheerioAPI, baseUrl: string, page: Page): Promise<number> {
   let queuedCount = 0;
   const links: Set<string> = new Set();
 
@@ -70,13 +70,12 @@ export async function queueLinks($: CheerioAPI, baseUrl: string, page: Page): Pr
   jsLinks.forEach(link => links.add(link));
 
   const startUrl = new URL(baseUrl);
-  const queue = new LinkQueue(startUrl);
 
   for (const href of links) {
     try {
       const fullUrl = new URL(href, baseUrl).href;
       if (fullUrl.startsWith(startUrl.origin)) {
-        queue.addToQueue(fullUrl);
+        linkQueue.addToQueue(fullUrl);
         queuedCount++;
       }
     } catch (error) {

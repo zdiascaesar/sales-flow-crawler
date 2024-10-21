@@ -128,7 +128,6 @@ export class EmailInfoCrawler {
     console.log(`Crawling: ${url} (${this.crawledPages}/${this.config.maxPages})`);
     this.eventEmitter.emit('log', `Crawling: ${url} (${this.crawledPages}/${this.config.maxPages})`);
 
-
     try {
       const page = await browser.newPage();
       await page.setDefaultNavigationTimeout(this.config.timeout);
@@ -160,7 +159,7 @@ export class EmailInfoCrawler {
       }
 
       if (this.crawledPages < this.config.maxPages && !this.stopRequested) {
-        const newLinks = await queueLinks($, url, page);
+        const newLinks = await queueLinks(this.linkQueue, $, url, page);
         console.log(`Queued ${newLinks} new links from ${url}`);
         this.eventEmitter.emit('log', `Queued ${newLinks} new links from ${url}`);
       }
@@ -181,6 +180,7 @@ export class EmailInfoCrawler {
       this.errors.push({ url, error: (error as Error).message });
     }
   }
+
   private async getExistingPageInfo(url: string): Promise<PageInfo | null> {
     try {
       const { data, error } = await this.supabase

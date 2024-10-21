@@ -5,16 +5,16 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const openaiApiKey = process.env.OPENAI_API_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kwephmvllmojxuxcgzco.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'fallback_key';
+const openaiApiKey = process.env.OPENAI_API_KEY || 'fallback_openai_key';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 const openai = new OpenAI({ apiKey: openaiApiKey });
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT!),
+  port: parseInt(process.env.EMAIL_PORT || '587'),
   secure: process.env.EMAIL_PORT === '465',
   auth: {
     user: process.env.EMAIL_USER,

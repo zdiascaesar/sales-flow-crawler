@@ -1,11 +1,32 @@
 # Dependency directories
+<<<<<<< HEAD
 node_modules/
 **/node_modules/
+=======
+/node_modules
+/.pnp
+.pnp.js
+>>>>>>> heroku/main
 
 # Environment variables
 .env
 .env*.local
 
+<<<<<<< HEAD
+=======
+# Next.js build output
+/.next/
+/out/
+
+# Production build files
+/build
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+>>>>>>> heroku/main
 # Logs
 *.log
 email_log.txt
@@ -13,10 +34,23 @@ email_log.txt
 # Binary files
 *.bin
 
+<<<<<<< HEAD
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+=======
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+.DS_Store
+*.pem
+>>>>>>> heroku/main
 
 # Puppeteer Chromium binary (redundant with node_modules, but explicit)
 **/node_modules/puppeteer/.local-chromium/
@@ -32,6 +66,7 @@ test.js
 *.swp
 *.swo
 
+<<<<<<< HEAD
 # OS generated files
 .DS_Store
 Thumbs.db
@@ -43,10 +78,13 @@ out/
 # Production build files
 /build
 
+=======
+>>>>>>> heroku/main
 # Temporary files
 *.tmp
 *.temp
 
+<<<<<<< HEAD
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
@@ -54,9 +92,14 @@ next-env.d.ts
 # Vercel
 .vercel
 
+=======
+>>>>>>> heroku/main
 # Large files (100MB+)
 *.large
 
 # Yarn
 .yarn/install-state.gz
+<<<<<<< HEAD
 .pnp.*
+=======
+>>>>>>> heroku/main

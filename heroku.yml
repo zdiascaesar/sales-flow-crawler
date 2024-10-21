@@ -1,5 +1,5 @@
 build:
   docker:
-    web: Dockerfile
+    web: frontend/Dockerfile
 run:
-  web: npm start -- -p $PORT
+  web: npm start

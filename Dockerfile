@@ -26,15 +26,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Copy backend
 COPY --from=backend-builder /usr/src/app/backend ./backend
 
 # Copy frontend build
 COPY --from=frontend-builder /usr/src/app/frontend/.next ./frontend/.next
-COPY --from=frontend-builder /usr/src/app/frontend/public ./frontend/public
+# Removed the line copying the non-existent 'public' directory
 COPY --from=frontend-builder /usr/src/app/frontend/package*.json ./frontend/
 
 # Install production dependencies for frontend

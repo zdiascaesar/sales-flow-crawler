@@ -17,7 +17,8 @@ export function LoginForm() {
 
   const addLog = useCallback((message: string) => {
     setLogs(prevLogs => [...prevLogs, message])
-    console.log(message) // Also log to console for easier debugging
+    // Console logging is used for development and debugging purposes
+    console.log(message)
   }, [])
 
   const handleLogin = useCallback(async (e?: React.FormEvent) => {
@@ -44,7 +45,10 @@ export function LoginForm() {
       
       if (sessionData.session) {
         addLog(`Session user ID: ${sessionData.session.user.id}`)
-        addLog(`Session expires at: ${new Date(sessionData.session.expires_at! * 1000).toLocaleString()}`)
+        const expiresAt = sessionData.session.expires_at
+        if (expiresAt) {
+          addLog(`Session expires at: ${new Date(expiresAt * 1000).toLocaleString()}`)
+        }
       } else {
         throw new Error('No session created after login')
       }

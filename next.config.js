@@ -13,4 +13,4 @@ const nextConfig = {
   // Add any other Next.js config options here
 };
 
-module.exports = nextConfig;
+export default nextConfig;

@@ -4,7 +4,7 @@ import { PageInfo } from './types';
 export class QueueManager {
   private queue: PageInfo[] = [];
   private supabase: SupabaseClient;
-  private isProcessing: boolean = false;
+  private isProcessing = false;
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -22,7 +22,7 @@ export class QueueManager {
     this.queue.push(pageInfo);
     console.log(`Added to queue: ${pageInfo.url}`);
     if (!this.isProcessing) {
-      this.processQueue();
+      await this.processQueue();
     }
   }
 

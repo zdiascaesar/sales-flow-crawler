@@ -73,29 +73,35 @@ export default function CrawlerPage() {
       }
 
       const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Failed to get response reader');
+      }
+
       const decoder = new TextDecoder();
 
-      while (true) {
-        const { done, value } = await reader!.read();
-        if (done) break;
+      let done = false;
+      while (!done) {
+        const { done: readerDone, value } = await reader.read();
+        done = readerDone;
+        if (value) {
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n').filter(Boolean);
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n').filter(Boolean);
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = JSON.parse(line.slice(6));
-            if (data.type === 'progress') {
-              setProgress(data.progress);
-            } else if (data.type === 'result') {
-              setResults(prev => [...prev, data.result]);
-            } else if (data.type === 'log') {
-              setLogs(prev => [...prev, data.message]);
-            } else if (data.type === 'error') {
-              setError(data.message);
-              setCrawling(false);
-            } else if (data.type === 'complete') {
-              setCrawling(false);
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = JSON.parse(line.slice(6));
+              if (data.type === 'progress') {
+                setProgress(data.progress);
+              } else if (data.type === 'result') {
+                setResults(prev => [...prev, data.result]);
+              } else if (data.type === 'log') {
+                setLogs(prev => [...prev, data.message]);
+              } else if (data.type === 'error') {
+                setError(data.message);
+                setCrawling(false);
+              } else if (data.type === 'complete') {
+                setCrawling(false);
+              }
             }
           }
         }

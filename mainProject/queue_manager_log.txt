@@ -1,0 +1,130 @@
+2024-10-22T08:59:15.450Z: Supabase client initialized
+2024-10-22T08:59:16.471Z: Supabase client initialized
+2024-10-22T08:59:29.726Z: Supabase client initialized
+2024-10-22T08:59:30.606Z: Supabase client initialized
+2024-10-22T09:01:00.515Z: Supabase client initialized
+2024-10-22T09:01:16.606Z: Supabase client initialized
+2024-10-22T09:01:17.589Z: Supabase client initialized
+2024-10-22T09:01:43.510Z: Supabase client initialized
+2024-10-22T09:01:49.217Z: Supabase client initialized
+2024-10-22T09:05:06.133Z: Supabase client initialized
+2024-10-22T09:07:44.831Z: Supabase client initialized
+2024-10-22T09:08:14.461Z: Supabase client initialized
+2024-10-22T09:08:43.665Z: Supabase client initialized
+2024-10-22T09:09:43.650Z: Supabase client initialized
+2024-10-22T09:10:00.221Z: Supabase client initialized
+2024-10-22T09:11:51.226Z: Supabase client initialized
+2024-10-22T09:13:16.454Z: Supabase client initialized
+2024-10-22T09:13:26.484Z: Added to queue: https://factories.by/
+2024-10-22T09:13:26.485Z: Started processing queue
+2024-10-22T09:13:26.485Z: Attempting to store data for https://factories.by/
+2024-10-22T09:13:26.630Z: No existing record found for https://factories.by/
+2024-10-22T09:13:26.630Z: Inserting new record for https://factories.by/
+2024-10-22T09:13:26.792Z: Successfully inserted new record for https://factories.by/
+2024-10-22T09:13:26.792Z: Successfully stored data for https://factories.by/
+2024-10-22T09:13:26.793Z: Finished processing queue
+2024-10-22T09:13:39.400Z: Added to queue: https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.401Z: Started processing queue
+2024-10-22T09:13:39.402Z: Attempting to store data for https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.553Z: No existing record found for https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.554Z: Inserting new record for https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.701Z: Successfully inserted new record for https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.701Z: Successfully stored data for https://factories.by/producers/departament-ispolneniya-nakazaniy-ministerstva-vnutrennikh-del-respubliki-belarus#reviews
+2024-10-22T09:13:39.701Z: Finished processing queue
+2024-10-22T09:13:40.720Z: Added to queue: https://factories.by/producers/layman#reviews
+2024-10-22T09:13:40.720Z: Started processing queue
+2024-10-22T09:13:40.721Z: Attempting to store data for https://factories.by/producers/layman#reviews
+2024-10-22T09:13:40.862Z: No existing record found for https://factories.by/producers/layman#reviews
+2024-10-22T09:13:40.863Z: Inserting new record for https://factories.by/producers/layman#reviews
+2024-10-22T09:13:41.019Z: Successfully inserted new record for https://factories.by/producers/layman#reviews
+2024-10-22T09:13:41.020Z: Successfully stored data for https://factories.by/producers/layman#reviews
+2024-10-22T09:13:41.020Z: Finished processing queue
+2024-10-22T09:13:42.089Z: Added to queue: https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.089Z: Started processing queue
+2024-10-22T09:13:42.089Z: Attempting to store data for https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.229Z: No existing record found for https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.229Z: Inserting new record for https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.371Z: Successfully inserted new record for https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.371Z: Successfully stored data for https://factories.by/producers/industriya-okon-plyus#reviews
+2024-10-22T09:13:42.371Z: Finished processing queue
+2024-10-22T09:13:43.340Z: Added to queue: https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.341Z: Started processing queue
+2024-10-22T09:13:43.341Z: Attempting to store data for https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.496Z: No existing record found for https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.497Z: Inserting new record for https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.643Z: Successfully inserted new record for https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.644Z: Successfully stored data for https://factories.by/producers/mvinnovacii
+2024-10-22T09:13:43.644Z: Finished processing queue
+2024-10-22T09:13:44.683Z: Added to queue: https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:44.683Z: Started processing queue
+2024-10-22T09:13:44.683Z: Attempting to store data for https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:44.829Z: No existing record found for https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:44.830Z: Inserting new record for https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:45.001Z: Successfully inserted new record for https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:45.002Z: Successfully stored data for https://factories.by/producers/elokh-lyaskovichi
+2024-10-22T09:13:45.002Z: Finished processing queue
+2024-10-22T09:13:45.979Z: Added to queue: https://factories.by/producers/teksson
+2024-10-22T09:13:45.979Z: Started processing queue
+2024-10-22T09:13:45.979Z: Attempting to store data for https://factories.by/producers/teksson
+2024-10-22T09:13:46.123Z: No existing record found for https://factories.by/producers/teksson
+2024-10-22T09:13:46.123Z: Inserting new record for https://factories.by/producers/teksson
+2024-10-22T09:13:46.265Z: Successfully inserted new record for https://factories.by/producers/teksson
+2024-10-22T09:13:46.266Z: Successfully stored data for https://factories.by/producers/teksson
+2024-10-22T09:13:46.266Z: Finished processing queue
+2024-10-22T09:13:47.235Z: Added to queue: https://factories.by/producers/planar
+2024-10-22T09:13:47.236Z: Started processing queue
+2024-10-22T09:13:47.236Z: Attempting to store data for https://factories.by/producers/planar
+2024-10-22T09:13:47.370Z: No existing record found for https://factories.by/producers/planar
+2024-10-22T09:13:47.371Z: Inserting new record for https://factories.by/producers/planar
+2024-10-22T09:13:47.521Z: Successfully inserted new record for https://factories.by/producers/planar
+2024-10-22T09:13:47.521Z: Successfully stored data for https://factories.by/producers/planar
+2024-10-22T09:13:47.521Z: Finished processing queue
+2024-10-22T09:13:48.563Z: Added to queue: https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.564Z: Started processing queue
+2024-10-22T09:13:48.564Z: Attempting to store data for https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.699Z: No existing record found for https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.700Z: Inserting new record for https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.853Z: Successfully inserted new record for https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.854Z: Successfully stored data for https://factories.by/producers/energoimpeks
+2024-10-22T09:13:48.855Z: Finished processing queue
+2024-10-22T09:13:49.937Z: Added to queue: https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:49.937Z: Started processing queue
+2024-10-22T09:13:49.938Z: Attempting to store data for https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:50.069Z: No existing record found for https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:50.070Z: Inserting new record for https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:50.213Z: Successfully inserted new record for https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:50.213Z: Successfully stored data for https://factories.by/producers/vorota-kalitki
+2024-10-22T09:13:50.213Z: Finished processing queue
+2024-10-22T09:13:51.240Z: Added to queue: https://factories.by/producers/fam
+2024-10-22T09:13:51.240Z: Started processing queue
+2024-10-22T09:13:51.240Z: Attempting to store data for https://factories.by/producers/fam
+2024-10-22T09:13:51.375Z: No existing record found for https://factories.by/producers/fam
+2024-10-22T09:13:51.375Z: Inserting new record for https://factories.by/producers/fam
+2024-10-22T09:13:51.515Z: Successfully inserted new record for https://factories.by/producers/fam
+2024-10-22T09:13:51.516Z: Successfully stored data for https://factories.by/producers/fam
+2024-10-22T09:13:51.516Z: Finished processing queue
+2024-10-22T09:13:52.514Z: Added to queue: https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.514Z: Started processing queue
+2024-10-22T09:13:52.514Z: Attempting to store data for https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.650Z: No existing record found for https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.650Z: Inserting new record for https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.791Z: Successfully inserted new record for https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.792Z: Successfully stored data for https://factories.by/producers/olniks-brend
+2024-10-22T09:13:52.792Z: Finished processing queue
+2024-10-22T09:13:53.852Z: Added to queue: https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:53.852Z: Started processing queue
+2024-10-22T09:13:53.852Z: Attempting to store data for https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:54.000Z: No existing record found for https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:54.001Z: Inserting new record for https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:54.155Z: Successfully inserted new record for https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:54.156Z: Successfully stored data for https://factories.by/producers/sfera-tekhnosveta
+2024-10-22T09:13:54.156Z: Finished processing queue
+2024-10-22T09:13:55.936Z: Supabase client initialized
+2024-10-22T09:13:55.963Z: Added to queue: https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:55.963Z: Started processing queue
+2024-10-22T09:13:55.963Z: Attempting to store data for https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:56.109Z: No existing record found for https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:56.109Z: Inserting new record for https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:56.257Z: Successfully inserted new record for https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:56.257Z: Successfully stored data for https://factories.by/producers/kpsr-grupp
+2024-10-22T09:13:56.258Z: Finished processing queue

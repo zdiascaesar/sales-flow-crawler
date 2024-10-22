@@ -52,14 +52,19 @@ COPY --from=builder --chown=nextjs:nodejs /app/emailHandler.js ./
 COPY --from=builder --chown=nextjs:nodejs /app/emailHandler.d.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/middleware.ts ./
 
-# Copy .env file
+# Copy .env file and ensure it is available in the runner
 COPY --from=builder --chown=nextjs:nodejs /app/.env ./
+COPY --from=builder --chown=nextjs:nodejs /app/.env.production ./
 
-# Set environment variables
+# Set environment variables to be accessible in the app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOST=0.0.0.0
 ENV PORT=3000
+
+# Load the necessary environment variables explicitly from .env file
+RUN echo "Loading environment variables" && \
+    export $(cat .env | grep -v '^#' | xargs)
 
 # Expose the port the app runs on
 EXPOSE 3000
@@ -83,7 +88,7 @@ LABEL org.opencontainers.image.source="https://github.com/yourusername/yourrepos
 LABEL org.opencontainers.image.description="Next.js application for web crawling and email handling"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Print non-sensitive environment variables
+# Print non-sensitive environment variables for debugging
 RUN echo "Printing non-sensitive environment variables:" && \
     env | grep -v -e PASSWORD -e KEY -e SECRET -e TOKEN | sort
 

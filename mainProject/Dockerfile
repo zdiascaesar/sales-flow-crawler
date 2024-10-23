@@ -13,9 +13,6 @@ RUN npm ci
 # Copy the entire project
 COPY . .
 
-# Copy .env.production to .env for build
-COPY .env.production .env
-
 # Build the application
 RUN npm run build
 
@@ -52,20 +49,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/emailHandler.js ./
 COPY --from=builder --chown=nextjs:nodejs /app/emailHandler.d.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/middleware.ts ./
 
-# Copy .env file and ensure it is available in the runner
-COPY --from=builder --chown=nextjs:nodejs /app/.env ./
-COPY --from=builder --chown=nextjs:nodejs /app/.env.production ./
-
-# Set environment variables to be accessible in the app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV HOST=0.0.0.0
-ENV PORT=3000
-
-# Load the necessary environment variables explicitly from .env file
-RUN echo "Loading environment variables" && \
-    export $(cat .env | grep -v '^#' | xargs)
-
 # Expose the port the app runs on
 EXPOSE 3000
 
@@ -82,15 +65,6 @@ USER nextjs
 # Add health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:${PORT}', (res) => res.statusCode === 200 ? process.exit(0) : process.exit(1))"
-
-# Add labels
-LABEL org.opencontainers.image.source="https://github.com/yourusername/yourrepository"
-LABEL org.opencontainers.image.description="Next.js application for web crawling and email handling"
-LABEL org.opencontainers.image.licenses="MIT"
-
-# Print non-sensitive environment variables for debugging
-RUN echo "Printing non-sensitive environment variables:" && \
-    env | grep -v -e PASSWORD -e KEY -e SECRET -e TOKEN | sort
 
 # Run the application
 CMD ["sh", "-c", "npm start -- -p ${PORT}"]

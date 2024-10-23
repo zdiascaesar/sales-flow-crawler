@@ -30,7 +30,7 @@ export default function AdminUsersPage() {
 
   const addLog = useCallback((message: string) => {
     setLogs(prevLogs => [...prevLogs, message])
-    console.log(message)
+    // console.log(message) // Removed to resolve ESLint warning
   }, [])
 
   const fetchUsers = useCallback(async () => {

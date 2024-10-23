@@ -13,7 +13,7 @@ export default function LoginPage() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        console.log('Login page - User already authenticated, redirecting to dashboard')
+        // console.log('Login page - User already authenticated, redirecting to dashboard') // Removed to resolve ESLint warning
         router.push('/dashboard')
       } else {
         setLoading(false)

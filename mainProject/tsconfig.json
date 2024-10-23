@@ -21,10 +21,11 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/lib/*": ["./frontend/lib/*"]
+      "*": ["./*"],
+      "lib/*": ["./lib/*", "./frontend/lib/*"]
     },
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "types": ["node", "uuid"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

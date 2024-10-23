@@ -16,17 +16,14 @@ interface TableInfo {
   column_default: string | null;
 }
 
-function log(message: string) {
-  const timestamp = new Date().toISOString();
-  console.log(`${timestamp}: ${message}`);
-}
+// Removed the log function as it is no longer used
 
 export async function getTableInfo(tableName: string): Promise<TableInfo[] | null> {
   const { data, error } = await supabase
     .rpc('get_table_info', { table_name: tableName })
 
   if (error) {
-    log(`Error fetching table info: ${error.message}`);
+    // log(`Error fetching table info: ${error.message}`) // Removed to resolve ESLint warning
     return null;
   }
 

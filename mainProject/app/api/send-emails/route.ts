@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { fetchEmails, isBusinessEmail, crawlWebsite, generateEmailContent, sendEmail } from '../../../lib/emailUtils';
+import { fetchEmails } from '../../../lib/emailUtils';
+import { queueManager } from '../../../lib/queueManager';
 import * as fs from 'fs';
 
 function log(message: string) {
@@ -14,33 +15,33 @@ export async function POST(request: Request) {
 
     const emails = await fetchEmails();
 
-    let sentCount = 0;
-    let failedCount = 0;
-
-    for (const email of emails) {
-      try {
-        const isBusiness = isBusinessEmail(email);
-        let websiteContent = '';
-        if (isBusiness) {
-          const domain = email.split('@')[1];
-          websiteContent = await crawlWebsite(`https://${domain}`);
-        }
-        const { subject, body } = await generateEmailContent(email, prompt, websiteContent);
-        await sendEmail(email, subject, body);
-        sentCount++;
-      } catch (error) {
-        log(`Error sending email: ${(error as Error).message}`);
-        failedCount++;
-      }
-    }
-
-    log(`Email sending completed. Sent: ${sentCount}, Failed: ${failedCount}`);
-    return NextResponse.json({ sentCount, failedCount });
-  } catch (error) {
-    log(`Error in send-emails route: ${(error as Error).message}`);
-    if (error instanceof Error && error.message === 'No recipients found') {
+    if (emails.length === 0) {
       return NextResponse.json({ noRecipientsFound: true }, { status: 404 });
     }
+
+    const jobId = await queueManager.addEmailProcessingJob(emails, prompt);
+
+    log(`Queued email processing job with ID: ${jobId} for ${emails.length} emails`);
+    return NextResponse.json({ jobId, message: 'Email processing job queued successfully', emailCount: emails.length });
+  } catch (error) {
+    log(`Error in send-emails route: ${(error as Error).message}`);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const jobId = searchParams.get('jobId');
+
+  if (!jobId) {
+    return NextResponse.json({ error: 'Job ID is required' }, { status: 400 });
+  }
+
+  const jobStatus = queueManager.getJobStatus(jobId);
+
+  if (!jobStatus) {
+    return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+  }
+
+  return NextResponse.json(jobStatus);
 }

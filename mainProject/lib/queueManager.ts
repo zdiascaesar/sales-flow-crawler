@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { PageInfo } from './types';
 import * as fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 function log(message: string) {
   const timestamp = new Date().toISOString();
@@ -8,10 +9,20 @@ function log(message: string) {
   fs.appendFileSync('queue_manager_log.txt', logMessage);
 }
 
+type EmailProcessingJob = {
+  id: string;
+  emails: string[];
+  prompt: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+};
+
+type QueueItem = PageInfo | EmailProcessingJob;
+
 export class QueueManager {
-  private queue: PageInfo[] = [];
+  private queue: QueueItem[] = [];
   private supabase: SupabaseClient;
   private isProcessing = false;
+  private jobStatuses: Map<string, EmailProcessingJob> = new Map();
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -25,12 +36,24 @@ export class QueueManager {
     log('Supabase client initialized');
   }
 
-  async addToQueue(pageInfo: PageInfo): Promise<void> {
-    this.queue.push(pageInfo);
-    log(`Added to queue: ${pageInfo.url}`);
+  async addToQueue(item: QueueItem): Promise<void> {
+    this.queue.push(item);
+    log(`Added to queue: ${('url' in item) ? item.url : 'Email processing job'}`);
     if (!this.isProcessing) {
       await this.processQueue();
     }
+  }
+
+  async addEmailProcessingJob(emails: string[], prompt: string): Promise<string> {
+    const jobId = uuidv4();
+    const job: EmailProcessingJob = { id: jobId, emails, prompt, status: 'pending' };
+    this.jobStatuses.set(jobId, job);
+    await this.addToQueue(job);
+    return jobId;
+  }
+
+  getJobStatus(jobId: string): EmailProcessingJob | undefined {
+    return this.jobStatuses.get(jobId);
   }
 
   private async processQueue(): Promise<void> {
@@ -40,23 +63,49 @@ export class QueueManager {
     log('Started processing queue');
 
     while (this.queue.length > 0) {
-      const pageInfo = this.queue.shift();
-      if (pageInfo) {
-        try {
-          await this.storePageInfo(pageInfo);
-          log(`Successfully stored data for ${pageInfo.url}`);
-        } catch (error) {
-          log(`Failed to store data for ${pageInfo.url}: ${error}`);
-          // Put the item back in the queue to retry later
-          this.queue.unshift(pageInfo);
-          // Wait for a bit before retrying
-          await new Promise(resolve => setTimeout(resolve, 5000));
+      const item = this.queue.shift();
+      if (item) {
+        if ('url' in item) {
+          await this.processPageInfo(item);
+        } else {
+          await this.processEmailJob(item);
         }
       }
     }
 
     this.isProcessing = false;
     log('Finished processing queue');
+  }
+
+  private async processPageInfo(pageInfo: PageInfo): Promise<void> {
+    try {
+      await this.storePageInfo(pageInfo);
+      log(`Successfully stored data for ${pageInfo.url}`);
+    } catch (error) {
+      log(`Failed to store data for ${pageInfo.url}: ${error}`);
+      // Put the item back in the queue to retry later
+      this.queue.unshift(pageInfo);
+      // Wait for a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
+
+  private async processEmailJob(job: EmailProcessingJob): Promise<void> {
+    try {
+      job.status = 'processing';
+      this.jobStatuses.set(job.id, job);
+      
+      // TODO: Implement email processing logic here
+      // This should include website analysis, email generation, and sending
+      
+      job.status = 'completed';
+      this.jobStatuses.set(job.id, job);
+      log(`Successfully processed email job ${job.id}`);
+    } catch (error) {
+      job.status = 'failed';
+      this.jobStatuses.set(job.id, job);
+      log(`Failed to process email job ${job.id}: ${error}`);
+    }
   }
 
   private async storePageInfo(pageInfo: PageInfo): Promise<void> {

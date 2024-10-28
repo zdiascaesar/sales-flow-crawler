@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.dockerignore
+README.md
+.eslintrc*
+*.log
+# Don't ignore .env for build
+!.env

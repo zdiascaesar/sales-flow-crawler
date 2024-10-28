@@ -1,10 +1,10 @@
 {
   "startUrl": "https://example.com",
-  "maxPages": 10,
+  "maxPages": 999999999,
   "concurrency": 5,
   "ignoreList": [],
   "normalizeEmails": true,
   "timeout": 30000,
-  "recrawlAfterDays": 30,
+  "recrawlAfterDays": 0,
   "maxRetries": 3
 }

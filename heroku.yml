@@ -4,6 +4,16 @@ setup:
       as: DATABASE
 build:
   docker:
-    web: Dockerfile
+    web:
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: https://kwephmvllmojxuxcgzco.supabase.co
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: eeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3ZXBobXZsbG1vanh1eGNnemNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwODk5NTQsImV4cCI6MjA0NDY2NTk1NH0.6H-ubD9A47Ie5Q1R4d3EYxpepRI5CkuWNnZC0jUccz4
+        SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3ZXBobXZsbG1vanh1eGNnemNvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyOTA4OTk1NCwiZXhwIjoyMDQ0NjY1OTU0fQ._qj6iLPPz-s3_yvlGGhcSv7-SGpdS6ChkaYuV-sqzMg
+        EMAIL_HOST: smtp.mail.ru
+        EMAIL_PASS: yTgfzWYAYjBtYU6bXFLr
+        EMAIL_PORT: 465
+        EMAIL_USER: agnaplus@agnaplus.com.kz
+        OPENAI_API_KEY: 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
 run:
   web: npm start -- -p $PORT

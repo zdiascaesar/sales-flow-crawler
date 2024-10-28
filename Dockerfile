@@ -47,9 +47,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies with specific flags to optimize installation
-RUN npm ci --only=production --ignore-scripts
-RUN npm install puppeteer
+# Install dependencies
+RUN npm ci
 
 # Copy source
 COPY . .
@@ -111,10 +110,10 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 
 # Set environment variables
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+ENV NODE_ENV="production"
+ENV NEXT_TELEMETRY_DISABLED="1"
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/google-chrome"
 
 # Add Chrome Stable
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
@@ -130,8 +129,5 @@ RUN addgroup --system --gid 1001 nodejs \
 
 USER nextjs
 
-# Expose the port the app runs on
-EXPOSE $PORT
-
 # Start the application
-CMD ["sh", "-c", "npm start -- -p $PORT"]
+CMD ["sh", "-c", "node_modules/.bin/next start -p $PORT"]

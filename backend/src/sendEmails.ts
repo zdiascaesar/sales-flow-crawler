@@ -176,7 +176,10 @@ async function generateEmailContent(email: string, websiteContent = ''): Promise
 
 Создайте уникальное и персонализированное письмо, представляющее Google и его услуги. Если это бизнес-email, адаптируйте контент к потенциальным потребностям компании на основе содержимого веб-сайта. Если это личный email, сосредоточьтесь на личной выгоде от услуг Google.
 
-Отформатируйте тело письма с правильными абзацами и разрывами строк.
+Важные правила:
+1. Не добавляйте подпись или прощание в конце письма если такого не было дано (например, "С уважением", "Best regards" и т.д.)
+2. Отформатируйте тело письма с правильными абзацами и разрывами строк
+3. Письмо должно заканчиваться основным содержанием без дополнительных формальностей
 
 Пожалуйста, отформатируйте ответ в виде действительного объекта JSON с полями "subject" и "body". Не включайте никакой дополнительный текст или форматирование за пределами объекта JSON. Если по какой-либо причине не удается сгенерировать персонализированное письмо, используйте следующий текст по умолчанию:
 
@@ -234,17 +237,25 @@ async function sendEmail(to: string, subject: string, content: string): Promise<
 export async function main(): Promise<void> {
   try {
     const emails = await fetchEmails();
+    const totalEmails = emails.length;
     
-    if (emails.length === 0) {
+    if (totalEmails === 0) {
       logger.info('No emails found to send to.');
       return;
     }
 
-    logger.info(`Found ${emails.length} email(s) to send to.`);
+    logger.info(`Starting email sending process. Total emails to send: ${totalEmails}`);
+    let successCount = 0;
+    let failureCount = 0;
 
-    for (const email of emails) {
+    for (let i = 0; i < emails.length; i++) {
+      const email = emails[i];
+      const currentProgress = i + 1;
+      
+      logger.info(`Progress: ${currentProgress}/${totalEmails} (${Math.round((currentProgress/totalEmails) * 100)}%)`);
+      
       const isBusiness = isBusinessEmail(email);
-      logger.info(`Email ${email} identified as ${isBusiness ? 'business' : 'personal'} email`);
+      logger.info(`Processing ${email} (${isBusiness ? 'business' : 'personal'} email)`);
       
       let websiteContent = '';
       if (isBusiness) {
@@ -260,12 +271,21 @@ export async function main(): Promise<void> {
       const { subject, body } = await generateEmailContent(email, websiteContent);
       
       logger.info(`Sending email to ${email}`);
-      await sendEmail(email, subject, body);
+      const success = await sendEmail(email, subject, body);
+      
+      if (success) {
+        successCount++;
+      } else {
+        failureCount++;
+      }
+
+      logger.info(`Current stats - Success: ${successCount}, Failed: ${failureCount}`);
       
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     logger.info('Email sending process completed.');
+    logger.info(`Final results - Total: ${totalEmails}, Success: ${successCount}, Failed: ${failureCount}`);
   } catch (error) {
     logger.error('Error in main function:', error);
   }

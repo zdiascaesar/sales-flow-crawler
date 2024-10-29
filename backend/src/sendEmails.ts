@@ -20,10 +20,17 @@ interface EmailContent {
   body: string;
 }
 
+interface EmailRecord {
+  email: string;
+  email_sent_date: string | null;
+}
+
 const DEFAULT_EMAIL_CONTENT: EmailContent = {
   subject: "Добрый день уважаемые Господа!",
   body: "Просим Вас ознакомиться с предложением по поставке промышленного оборудования и по возможности передать своим коллегам. Наша компания ТОО «АГНА+» имеет опыт поставок широкого спектра промышленной иностранной продукции (КИПиА, электротехника, агрегаты, насосы, механика) в том числе поставляем широкий спектр химических реагентов и промышленных масел. Вся информация в официальном письме в приложении, а также в презентационном материале ниже:\nhttps://drive.google.com/file/d/1HB6JIYOy_d551hKqE_rY1TCUmF7B74uo/view?usp=sharing"
 };
+
+const MINIMUM_DAYS_BETWEEN_EMAILS = 7;
 
 dotenv.config();
 logger.info('Script started');
@@ -57,6 +64,17 @@ const transporter = nodemailer.createTransport({
 });
 
 logger.info('Clients initialized');
+
+function isEmailEligibleToSend(lastSentDate: string | null): boolean {
+  if (!lastSentDate) return true;
+
+  const lastSent = new Date(lastSentDate);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - lastSent.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays >= MINIMUM_DAYS_BETWEEN_EMAILS;
+}
 
 async function fetchWithSSLBypass(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -148,13 +166,19 @@ async function fetchEmails(): Promise<string[]> {
   logger.info('Fetching emails from Supabase...');
   const { data, error } = await supabase
     .from('emails')
-    .select('email');
+    .select('email, email_sent_date');
 
   if (error) {
     throw new Error(`Error fetching emails: ${error.message}`);
   }
 
-  return data.map(row => row.email);
+  const eligibleEmails = data
+    .filter((record: EmailRecord) => isEmailEligibleToSend(record.email_sent_date))
+    .map((record: EmailRecord) => record.email);
+
+  logger.info(`Found ${data.length} total emails, ${eligibleEmails.length} are eligible to send`);
+  
+  return eligibleEmails;
 }
 
 async function updateEmailSentDate(email: string): Promise<void> {
@@ -254,7 +278,7 @@ export async function main(): Promise<void> {
     const totalEmails = emails.length;
     
     if (totalEmails === 0) {
-      logger.info('No emails found to send to.');
+      logger.info('No emails eligible to send at this time.');
       return;
     }
 

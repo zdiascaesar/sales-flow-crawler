@@ -1,42 +1,50 @@
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
-import fs from 'fs';
-import { Configuration, OpenAIApi } from 'openai';
-import axios from 'axios';
+import OpenAI from 'openai';
 import cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import https from 'https';
 import { supabase, supabaseUrl, supabaseKey } from './config';
 import { LinkQueue } from './LinkQueue';
+import { logger } from './logger';
 
-dotenv.config();
-console.log('Script started');
-
-function log(message: string): void {
-  const timestamp = new Date().toISOString();
-  const logMessage = `${timestamp}: ${message}\n`;
-  console.log(message);
-  fs.appendFileSync('email_log.txt', logMessage);
+interface PageInfo {
+  url: string;
+  title: string;
+  description: string;
+  bodyText: string;
 }
 
-log('Environment variables loaded');
+interface EmailContent {
+  subject: string;
+  body: string;
+}
+
+const DEFAULT_EMAIL_CONTENT: EmailContent = {
+  subject: "Добрый день уважаемые Господа!",
+  body: "Просим Вас ознакомиться с предложением по поставке промышленного оборудования и по возможности передать своим коллегам. Наша компания ТОО «АГНА+» имеет опыт поставок широкого спектра промышленной иностранной продукции (КИПиА, электротехника, агрегаты, насосы, механика) в том числе поставляем широкий спектр химических реагентов и промышленных масел. Вся информация в официальном письме в приложении, а также в презентационном материале ниже:\nhttps://drive.google.com/file/d/1HB6JIYOy_d551hKqE_rY1TCUmF7B74uo/view?usp=sharing"
+};
+
+dotenv.config();
+logger.info('Script started');
+
+logger.info('Environment variables loaded');
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
-log('Supabase URL: ' + (supabaseUrl ? 'Set' : 'Not set'));
-log('Supabase Key: ' + (supabaseKey ? 'Set' : 'Not set'));
-log('OpenAI API Key: ' + (openaiApiKey ? 'Set' : 'Not set'));
+logger.info('Supabase URL: ' + (supabaseUrl ? 'Set' : 'Not set'));
+logger.info('Supabase Key: ' + (supabaseKey ? 'Set' : 'Not set'));
+logger.info('OpenAI API Key: ' + (openaiApiKey ? 'Set' : 'Not set'));
 
 if (!openaiApiKey) {
   throw new Error('OpenAI API Key is missing. Please check your .env file.');
 }
 
-log('Initializing clients');
+logger.info('Initializing clients');
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -48,7 +56,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-log('Clients initialized');
+logger.info('Clients initialized');
 
 async function fetchWithSSLBypass(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -60,13 +68,13 @@ async function fetchWithSSLBypass(url: string): Promise<string> {
   });
 }
 
-async function crawl(startUrl: string, maxPages = 10, concurrency = 5): Promise<any[]> {
+async function crawl(startUrl: string, maxPages = 10, concurrency = 5): Promise<PageInfo[]> {
   const linkQueue = new LinkQueue(startUrl);
-  const results: any[] = [];
+  const results: PageInfo[] = [];
   let crawledPages = 0;
   let activeRequests = 0;
 
-  log(`Starting crawl from ${startUrl}`);
+  logger.info(`Starting crawl from ${startUrl}`);
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -87,18 +95,18 @@ async function crawl(startUrl: string, maxPages = 10, concurrency = 5): Promise<
       await new Promise(resolve => setTimeout(resolve, 100));
     }
   } catch (error) {
-    log(`Crawl error: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error('Crawl error:', error);
   } finally {
     await browser.close();
   }
 
-  log(`Crawling completed. Visited ${crawledPages} pages.`);
+  logger.info(`Crawling completed. Visited ${crawledPages} pages.`);
   return results;
 }
 
-async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: LinkQueue, results: any[]): Promise<void> {
+async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: LinkQueue, results: PageInfo[]): Promise<void> {
   linkQueue.markVisited(url);
-  log(`Crawling: ${url}`);
+  logger.info(`Crawling: ${url}`);
 
   try {
     let html: string;
@@ -109,7 +117,7 @@ async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: Lin
       html = await page.content();
       await page.close();
     } catch (error) {
-      log(`Error using Puppeteer for ${url}: ${error instanceof Error ? error.message : String(error)}. Trying SSL bypass...`);
+      logger.error(`Error using Puppeteer for ${url}. Trying SSL bypass...`, error);
       html = await fetchWithSSLBypass(url);
     }
 
@@ -119,7 +127,7 @@ async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: Lin
 
     await linkQueue.queueLinks($, url);
   } catch (error) {
-    log(`Error crawling ${url}: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Error crawling ${url}:`, error);
     results.push({
       url,
       title: 'Unable to extract title',
@@ -129,7 +137,7 @@ async function crawlPage(url: string, browser: puppeteer.Browser, linkQueue: Lin
   }
 }
 
-function extractPageInfo($: cheerio.CheerioAPI, url: string): { url: string; title: string; description: string; bodyText: string } {
+function extractPageInfo($: cheerio.CheerioAPI, url: string): PageInfo {
   const title = $('title').text() || 'No title found';
   const description = $('meta[name="description"]').attr('content') || 'No description found';
   const bodyText = $('body').text().slice(0, 1000) || 'No body text found';
@@ -137,7 +145,7 @@ function extractPageInfo($: cheerio.CheerioAPI, url: string): { url: string; tit
 }
 
 async function fetchEmails(): Promise<string[]> {
-  log('Fetching emails from Supabase...');
+  logger.info('Fetching emails from Supabase...');
   const { data, error } = await supabase
     .from('emails')
     .select('email');
@@ -155,31 +163,34 @@ function isBusinessEmail(email: string): boolean {
   return !commonPersonalDomains.includes(domain);
 }
 
-async function generateEmailContent(email: string, websiteContent = ''): Promise<{ subject: string; body: string }> {
+async function generateEmailContent(email: string, websiteContent = ''): Promise<EmailContent> {
   try {
-    const prompt = `Generate a personalized email subject and body based on the following information:
+    const prompt = `
+Вы - полезный ассистент ИИ, который генерирует персонализированное email-содержимое в правильном формате JSON с надлежащим форматированием на русском языке.
 
-Recipient email: ${email}
-Is business email: ${isBusinessEmail(email)}
-Website content: ${websiteContent}
+Сгенерируйте персонализированное email-письмо на русском языке с темой и телом, основанными на следующей информации:
 
-Create a unique and personalized email introducing Google and its services. If it's a business email, tailor the content to the company's potential needs based on the website content. If it's a personal email, focus on personal benefits of Google services.
+Адрес электронной почты получателя: ${email}
+Является ли это бизнес-email: ${isBusinessEmail(email)}
+Содержание веб-сайта: ${websiteContent}
 
-Format the email body with proper paragraphs and line breaks.
+Создайте уникальное и персонализированное письмо, представляющее Google и его услуги. Если это бизнес-email, адаптируйте контент к потенциальным потребностям компании на основе содержимого веб-сайта. Если это личный email, сосредоточьтесь на личной выгоде от услуг Google.
 
-Please format your response as a valid JSON object with "subject" and "body" fields. Do not include any additional text or formatting outside of the JSON object. For example:
-{"subject": "Your personalized subject here", "body": "Your personalized email body here\\n\\nWith proper formatting and paragraphs."}`;
+Отформатируйте тело письма с правильными абзацами и разрывами строк.
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+Пожалуйста, отформатируйте ответ в виде действительного объекта JSON с полями "subject" и "body". Не включайте никакой дополнительный текст или форматирование за пределами объекта JSON. Если по какой-либо причине не удается сгенерировать персонализированное письмо, используйте следующий текст по умолчанию:
+
+${JSON.stringify(DEFAULT_EMAIL_CONTENT, null, 2)}`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
       messages: [
-        {"role": "system", "content": "You are a helpful assistant that generates personalized email content in valid JSON format with proper formatting."},
-        {"role": "user", "content": prompt}
+        { "role": "system", "content": prompt }
       ],
       max_tokens: 1000
     });
 
-    const content = response.data.choices[0]?.message?.content?.trim() || '';
+    const content = response.choices[0]?.message?.content?.trim() || '';
     
     if (!content) {
       throw new Error('No content generated from OpenAI');
@@ -194,11 +205,8 @@ Please format your response as a valid JSON object with "subject" and "body" fie
       throw new Error('Invalid content structure');
     }
   } catch (error) {
-    log(`Error generating email content: ${error instanceof Error ? error.message : String(error)}`);
-    return { 
-      subject: 'Introduction from Google', 
-      body: 'Error generating personalized content. This is a default message.' 
-    };
+    logger.error('Ошибка при генерации содержимого электронной почты:', error);
+    return DEFAULT_EMAIL_CONTENT;
   }
 }
 
@@ -215,10 +223,10 @@ async function sendEmail(to: string, subject: string, content: string): Promise<
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    log(`Email sent to ${to}: ${info.messageId}`);
+    logger.info(`Email sent to ${to}: ${info.messageId}`);
     return true;
   } catch (error) {
-    log(`Error sending email to ${to}: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Error sending email to ${to}:`, error);
     return false;
   }
 }
@@ -228,37 +236,37 @@ export async function main(): Promise<void> {
     const emails = await fetchEmails();
     
     if (emails.length === 0) {
-      log('No emails found to send to.');
+      logger.info('No emails found to send to.');
       return;
     }
 
-    log(`Found ${emails.length} email(s) to send to.`);
+    logger.info(`Found ${emails.length} email(s) to send to.`);
 
     for (const email of emails) {
       const isBusiness = isBusinessEmail(email);
-      log(`Email ${email} identified as ${isBusiness ? 'business' : 'personal'} email`);
+      logger.info(`Email ${email} identified as ${isBusiness ? 'business' : 'personal'} email`);
       
       let websiteContent = '';
       if (isBusiness) {
         const domain = email.split('@')[1];
         const startUrl = `https://${domain}`;
-        log(`Crawling website for ${domain}`);
+        logger.info(`Crawling website for ${domain}`);
         const crawlResults = await crawl(startUrl, 5, 2);
         
         websiteContent = crawlResults.map(result => `${result.title}\n${result.description}\n${result.bodyText}`).join('\n\n');
       }
       
-      log(`Generating email content for ${email}`);
+      logger.info(`Generating email content for ${email}`);
       const { subject, body } = await generateEmailContent(email, websiteContent);
       
-      log(`Sending email to ${email}`);
+      logger.info(`Sending email to ${email}`);
       await sendEmail(email, subject, body);
       
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    log('Email sending process completed.');
+    logger.info('Email sending process completed.');
   } catch (error) {
-    log(`Error in main function: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error('Error in main function:', error);
   }
 }

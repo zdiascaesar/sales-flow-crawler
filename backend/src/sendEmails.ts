@@ -157,6 +157,20 @@ async function fetchEmails(): Promise<string[]> {
   return data.map(row => row.email);
 }
 
+async function updateEmailSentDate(email: string): Promise<void> {
+  const { error } = await supabase
+    .from('emails')
+    .update({ email_sent_date: new Date().toISOString() })
+    .eq('email', email);
+
+  if (error) {
+    logger.error(`Error updating email_sent_date for ${email}:`, error);
+    throw error;
+  }
+  
+  logger.info(`Updated email_sent_date for ${email}`);
+}
+
 function isBusinessEmail(email: string): boolean {
   const commonPersonalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'mail.com', 'yandex.com', 'protonmail.com', 'zoho.com', 'gmx.com', 'fastmail.com', 'hushmail.com', 'tutanota.com', 'inbox.com', 'mail.ru', 'bk.ru', 'list.ru', 'inbox.ru', 'rambler.ru', 'qq.com', 'nate.com', 'naver.com', '163.com', '126.com', 'sina.com', 'daum.net', 'rediffmail.com', 'web.de', 'libero.it', 'virgilio.it', 'wanadoo.fr', 'orange.fr'];
   const domain = email.split('@')[1];
@@ -177,9 +191,9 @@ async function generateEmailContent(email: string, websiteContent = ''): Promise
 Создайте уникальное и персонализированное письмо, представляющее Google и его услуги. Если это бизнес-email, адаптируйте контент к потенциальным потребностям компании на основе содержимого веб-сайта. Если это личный email, сосредоточьтесь на личной выгоде от услуг Google.
 
 Важные правила:
-1. Не добавляйте подпись или прощание в конце письма если такого не было дано (например, "С уважением", "Best regards" и т.д.)
+1. Не добавляйте подпись или прощание в конце письма если такого не было дано(например, "С уважением", "Best regards" и т.д.)
 2. Отформатируйте тело письма с правильными абзацами и разрывами строк
-3. Письмо должно заканчиваться основным содержанием без дополнительных формальностей
+3. Письмо должно заканчиваться основным содержанием без дополнительных формальностей если такого не было дано
 
 Пожалуйста, отформатируйте ответ в виде действительного объекта JSON с полями "subject" и "body". Не включайте никакой дополнительный текст или форматирование за пределами объекта JSON. Если по какой-либо причине не удается сгенерировать персонализированное письмо, используйте следующий текст по умолчанию:
 
@@ -275,6 +289,11 @@ export async function main(): Promise<void> {
       
       if (success) {
         successCount++;
+        try {
+          await updateEmailSentDate(email);
+        } catch (error) {
+          logger.error(`Failed to update email_sent_date for ${email}, but email was sent successfully`);
+        }
       } else {
         failureCount++;
       }

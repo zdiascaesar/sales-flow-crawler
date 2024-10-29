@@ -112,6 +112,7 @@ COPY --from=builder /app/next.config.* ./
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/crawler-config.json ./
 
 # Set environment variables
 ENV NODE_ENV="production"

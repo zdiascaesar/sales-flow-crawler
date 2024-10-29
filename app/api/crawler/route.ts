@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { EmailInfoCrawler } from '@/lib/emailInfoCrawler'
-import { getTableInfo } from '@/lib/supabase'
+import { EmailInfoCrawler } from 'lib/emailInfoCrawler'
+import { getTableInfo } from 'lib/supabase'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -15,7 +15,12 @@ export async function GET() {
     return NextResponse.json({ message: 'GET request received', tableInfo })
   } catch (error) {
     console.error('GET error:', error)
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+    // Return more detailed error information
+    return NextResponse.json({ 
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      name: (error as Error).name
+    }, { status: 500 })
   }
 }
 
@@ -40,22 +45,31 @@ export async function POST(request: Request) {
         if (!startUrl) {
           return NextResponse.json({ error: 'Start URL is required' }, { status: 400 })
         }
-        crawler = new EmailInfoCrawler(configPath)
-        crawler.on('log', (message) => {
-          console.log(message)
-        })
-        crawler.on('result', (result) => {
-          console.log('Crawl result:', result)
-        })
-        // Start the crawl process with the provided startUrl, maxPages, and concurrency
-        crawler.crawl(startUrl, maxPages, concurrency).then(() => {
-          console.log('Crawl completed')
-          crawler = null
-        }).catch((error) => {
-          console.error('Crawl error:', error)
-          crawler = null
-        })
-        return NextResponse.json({ message: 'Crawler started' })
+        try {
+          crawler = new EmailInfoCrawler(configPath)
+          crawler.on('log', (message) => {
+            console.log(message)
+          })
+          crawler.on('result', (result) => {
+            console.log('Crawl result:', result)
+          })
+          // Start the crawl process with the provided startUrl, maxPages, and concurrency
+          crawler.crawl(startUrl, maxPages, concurrency).then(() => {
+            console.log('Crawl completed')
+            crawler = null
+          }).catch((error) => {
+            console.error('Crawl error:', error)
+            crawler = null
+          })
+          return NextResponse.json({ message: 'Crawler started' })
+        } catch (error) {
+          console.error('Error initializing crawler:', error)
+          return NextResponse.json({ 
+            error: 'Failed to initialize crawler',
+            details: (error as Error).message,
+            stack: (error as Error).stack
+          }, { status: 500 })
+        }
 
       case 'stop':
         if (crawler && crawler.isRunning()) {
@@ -70,6 +84,11 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error('POST error:', error)
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 })
+    // Return more detailed error information
+    return NextResponse.json({ 
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      name: (error as Error).name
+    }, { status: 500 })
   }
 }

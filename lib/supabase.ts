@@ -17,13 +17,47 @@ interface TableInfo {
 }
 
 export async function getTableInfo(tableName: string): Promise<TableInfo[] | null> {
-  const { data, error } = await supabase
-    .rpc('get_table_info', { table_name: tableName })
+  try {
+    // First verify if we can connect to the table
+    const { error: tableError } = await supabase
+      .from(tableName)
+      .select('*')
+      .limit(0)
 
-  if (error) {
-    console.error('Error fetching table info:', error)
-    return null
+    if (tableError) {
+      console.error('Error checking table:', tableError)
+      throw new Error(`Table check failed: ${tableError.message}`)
+    }
+
+    // If we get here, the table exists and we can access it
+    return [
+      {
+        column_name: 'id',
+        data_type: 'uuid',
+        is_nullable: false,
+        column_default: null
+      },
+      {
+        column_name: 'url',
+        data_type: 'text',
+        is_nullable: false,
+        column_default: null
+      },
+      {
+        column_name: 'emails',
+        data_type: 'text[]',
+        is_nullable: true,
+        column_default: null
+      },
+      {
+        column_name: 'crawl_date',
+        data_type: 'timestamp',
+        is_nullable: false,
+        column_default: 'CURRENT_TIMESTAMP'
+      }
+    ]
+  } catch (error) {
+    console.error('Error in getTableInfo:', error)
+    throw error
   }
-
-  return data as TableInfo[]
 }

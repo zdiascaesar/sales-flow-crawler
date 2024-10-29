@@ -1,0 +1,4 @@
+2024-10-22T09:01:57.615Z: Starting crawl from https://factories.by/
+2024-10-22T09:01:57.620Z: Crawl error: Browser was not found at the configured executablePath (/usr/bin/google-chrome-stable)
+2024-10-22T09:01:57.620Z: Crawling completed. Visited 0 pages.
+2024-10-22T09:01:57.620Z: Crawl completed

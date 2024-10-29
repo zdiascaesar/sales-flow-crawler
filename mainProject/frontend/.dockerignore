@@ -1,0 +1,21 @@
+# Ignore node_modules as we'll install dependencies in the container
+node_modules
+
+# Ignore development and git files
+.git
+.gitignore
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore build output
+.next
+
+# Ignore any other unnecessary files for the Docker image
+README.md
+*.md
+
+# Ignore the backend directory if it exists at the same level as frontend
+../backend

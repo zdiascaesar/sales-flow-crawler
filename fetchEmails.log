@@ -1,0 +1,14 @@
+Supabase URL: https://kwephmvllmojxuxcgzco.supabase.co
+Supabase Key: [REDACTED]
+Attempting to fetch emails...
+No emails found in the table.
+Script execution completed.
+Supabase URL: https://kwephmvllmojxuxcgzco.supabase.co
+Supabase Key: [REDACTED]
+Listing all tables in the database...
+Error listing tables: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.information_schema.tables\" does not exist"}
+Describing the structure of the emails table...
+Error describing emails table: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.information_schema.columns\" does not exist"}
+Attempting to fetch emails...
+No emails found in the table.
+Script execution completed.

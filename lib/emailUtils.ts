@@ -5,17 +5,23 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const openaiApiKey = process.env.OPENAI_API_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const openaiApiKey = process.env.OPENAI_API_KEY;
+
+if (!supabaseUrl || !supabaseKey || !openaiApiKey) {
+  throw new Error('Missing required environment variables');
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 const openai = new OpenAI({ apiKey: openaiApiKey });
 
+const emailPort = process.env.EMAIL_PORT ? parseInt(process.env.EMAIL_PORT, 10) : undefined;
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT!),
-  secure: process.env.EMAIL_PORT === '465',
+  port: emailPort,
+  secure: emailPort === 465,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -25,6 +31,7 @@ const transporter = nodemailer.createTransport({
 export function log(message: string) {
   const timestamp = new Date().toISOString();
   const logMessage = `${timestamp}: ${message}\n`;
+  // Console logging is used for development and debugging purposes
   console.log(message);
   fs.appendFileSync('email_log.txt', logMessage);
 }
@@ -47,7 +54,7 @@ export async function fetchEmails() {
 export function isBusinessEmail(email: string): boolean {
   const commonPersonalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com'];
   const domain = email.split('@')[1];
-  return !commonPersonalDomains.includes(domain);
+  return domain ? !commonPersonalDomains.includes(domain) : false;
 }
 
 export async function crawlWebsite(url: string): Promise<string> {

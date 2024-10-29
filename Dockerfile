@@ -126,5 +126,8 @@ RUN addgroup --system --gid 1001 nodejs \
 
 USER nextjs
 
+# Expose the port the app runs on
+EXPOSE 3000
+
 # Start the application
 CMD ["sh", "-c", "node_modules/.bin/next start -p $PORT"]

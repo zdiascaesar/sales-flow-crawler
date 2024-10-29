@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Crawler Project
 
-## Getting Started
+## Environment Variables
 
-First, run the development server:
+This project uses environment variables for configuration. These should be set securely in your production environment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Setting Up Environment Variables
+
+1. Create a `.env` file in the root directory of the project for local development.
+2. Use `.env.production` for production builds, but do not commit this file with real values.
+3. Set environment variables on your production server or CI/CD pipeline.
+
+### Required Environment Variables
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+EMAIL_HOST=smtp.mail.ru
+EMAIL_PORT=465
+EMAIL_USER=your_email_here
+EMAIL_PASS=your_email_password_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Handling Environment Variables in Production
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Never commit real API keys or passwords to version control.**
+2. Use environment management tools provided by your hosting platform (e.g., Heroku Config Vars, Vercel Environment Variables).
+3. For Docker deployments, pass environment variables at runtime:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```
+   docker run -e OPENAI_API_KEY=your_key -e SUPABASE_SERVICE_ROLE_KEY=your_key ... your-image-name
+   ```
 
-## Learn More
+4. For Kubernetes deployments, use Secrets to manage sensitive information.
 
-To learn more about Next.js, take a look at the following resources:
+### Security Best Practices
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Rotate API keys and passwords regularly.
+2. Use the principle of least privilege when assigning permissions to service accounts.
+3. Monitor usage of API keys and investigate any suspicious activity.
+4. Consider using a secrets management service for handling sensitive information in large-scale deployments.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Running the Application
 
-## Deploy on Vercel
+To run the application locally:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Copy `.env.example` to `.env` and fill in your development environment variables.
+2. Run `npm install` to install dependencies.
+3. Run `npm run dev` to start the development server.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For production deployment, ensure all environment variables are properly set in your production environment before starting the application.

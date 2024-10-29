@@ -7,4 +7,4 @@ build:
     web:
       dockerfile: Dockerfile
 run:
-  web: npm start -- -p $PORT
+  web: npm start

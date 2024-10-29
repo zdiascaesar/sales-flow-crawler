@@ -242,8 +242,8 @@ async function sendEmail(to: string, subject: string, content: string): Promise<
     const info = await transporter.sendMail(mailOptions);
     logger.info(`Email sent to ${to}: ${info.messageId}`);
     return true;
-  } catch (error) {
-    logger.error(`Error sending email to ${to}:`, error);
+  } catch (updateError) {
+    logger.error(`Error sending email to ${to}:`, updateError);
     return false;
   }
 }
@@ -291,8 +291,8 @@ export async function main(): Promise<void> {
         successCount++;
         try {
           await updateEmailSentDate(email);
-        } catch (error) {
-          logger.error(`Failed to update email_sent_date for ${email}, but email was sent successfully`);
+        } catch (updateError) {
+          logger.error(`Failed to update email_sent_date for ${email}, but email was sent successfully:`, updateError);
         }
       } else {
         failureCount++;
@@ -305,7 +305,7 @@ export async function main(): Promise<void> {
 
     logger.info('Email sending process completed.');
     logger.info(`Final results - Total: ${totalEmails}, Success: ${successCount}, Failed: ${failureCount}`);
-  } catch (error) {
-    logger.error('Error in main function:', error);
+  } catch (mainError) {
+    logger.error('Error in main function:', mainError);
   }
 }
